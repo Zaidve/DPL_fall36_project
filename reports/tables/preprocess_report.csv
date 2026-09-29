@@ -1,0 +1,29 @@
+﻿dataset,step,rows_before,rows_after,rows_removed,texts_changed,pct_changed,detail
+neu-esc,load,32966.0,32966.0,0.0,,,"train=23048, val=3305, test=6613"
+neu-esc,unicode,,,,0.0,0.0,
+neu-esc,tone_marks,,,,1581.0,6.859597362027074,
+neu-esc,urls,,,,4.0,0.017355085039916694,
+neu-esc,masked_names,,,,0.0,0.0,
+neu-esc,teencode,,,,,,off
+neu-esc,lowercase,,,,,,off
+neu-esc,repeated_chars,,,,4.0,0.017355085039916694,
+neu-esc,whitespace,,,,13.0,0.05640402637972926,
+neu-esc,drop_empty,32966.0,32966.0,0.0,,,
+neu-esc,dedup_train,32966.0,32966.0,0.0,,,"groups=0, conflicting sentiment=0, conflicting topic=0"
+neu-esc,flag_leakage,32966.0,32966.0,0.0,,,"flagged=0, dropped=0"
+neu-esc,segment,,,,18301.0,79.40385282887887,segmenter=underthesea
+neu-esc,train_subsets,23048.0,23048.0,0.0,,,"0.1=2308, 0.25=5769, 0.5=11533"
+uit-vsfc,load,16175.0,16175.0,0.0,,,"train=11426, val=1583, test=3166"
+uit-vsfc,unicode,,,,0.0,0.0,
+uit-vsfc,tone_marks,,,,215.0,1.8816733765097147,
+uit-vsfc,urls,,,,0.0,0.0,
+uit-vsfc,masked_names,,,,211.0,1.846665499737441,
+uit-vsfc,teencode,,,,,,off
+uit-vsfc,lowercase,,,,,,off
+uit-vsfc,repeated_chars,,,,1.0,0.00875196919306844,
+uit-vsfc,whitespace,,,,5.0,0.0437598459653422,
+uit-vsfc,drop_empty,16175.0,16175.0,0.0,,,
+uit-vsfc,dedup_train,16175.0,16174.0,1.0,,,"groups=1, conflicting sentiment=1, conflicting topic=0"
+uit-vsfc,flag_leakage,16174.0,16174.0,0.0,,,"flagged=0, dropped=0"
+uit-vsfc,segment,,,,10443.0,91.40481400437636,segmenter=underthesea
+uit-vsfc,train_subsets,11425.0,11425.0,0.0,,,"0.1=1143, 0.25=2858, 0.5=5715"

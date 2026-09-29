@@ -1,0 +1,18 @@
+preprocess:
+  unicode_nfc: true
+  tone_marks: new_style        # new_style | off
+  replace_urls: true
+  replace_masked_names: true
+  max_repeat_chars: 2          # 0 = off
+  teencode: false              # optional ablation; mapping in teencode_file
+  teencode_file: configs/teencode.yaml
+  lowercase: false             # data is already lowercase
+  segmenter: vncorenlp         # vncorenlp | underthesea | none (vncorenlp falls back to underthesea without Java)
+  dedup_train: true
+  drop_test_overlap: false     # true = drop train rows whose text is in test
+  subset_fractions: [0.1, 0.25, 0.5]
+  seed: 42
+  # NEU-ESC names are not confirmed yet: unconfirmed sentiment names get a '?' suffix, topics become t0..t9
+  label_names_confirmed:
+    neu-esc: false
+    uit-vsfc: true

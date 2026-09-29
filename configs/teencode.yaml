@@ -1,0 +1,30 @@
+# Whole-word teencode -> standard Vietnamese, used only when preprocess.teencode is true.
+# Keep it short; extend only with forms actually seen in the data.
+ko: không
+k: không
+kh: không
+khg: không
+hok: không
+dc: được
+đc: được
+dk: được
+j: gì
+bt: bình thường
+bth: bình thường
+bn: bao nhiêu
+mn: mọi người
+mng: mọi người
+ng: người
+nt: nhắn tin
+ib: nhắn tin
+vs: với
+cx: cũng
+cg: cũng
+r: rồi
+ms: mới
+trc: trước
+lm: làm
+nch: nói chuyện
+sv: sinh viên
+gv: giảng viên
+thpt: trung học phổ thông
