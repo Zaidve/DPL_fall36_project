@@ -13,7 +13,7 @@ running the experiment matrix on Kaggle and reading the results.
 
 | Item | State |
 |---|---|
-| Git | branch `master`, 13 commits, **no remote**. Uncommitted: `utils/loss_function.py` (memory-lean PCGrad), `PROJECT_OVERVIEW.md`, this file |
+| Git | branch `master`, everything committed (last: `8f4f382`, memory-lean PCGrad + these docs), **no remote yet** |
 | Tests | 116 passing (9 files in `tests/`, plain Python, CPU, no downloads) |
 | Data | `data/processed/*.parquet` + `*_subsets.json` committed (training input) |
 | Trained runs | none (only debug runs in the scratch folder, not in `models/`) |
@@ -27,15 +27,7 @@ running the experiment matrix on Kaggle and reading the results.
 
 ### Step 0: get the code to Kaggle (once)
 
-```bash
-git add -A
-```
-
-```bash
-git commit -m "Memory-lean PCGrad, overview and next steps"
-```
-
-Then **either**
+Everything is committed. **Either**
 - create an empty GitHub repository, `git remote add origin <url>`, `git push -u origin master`, and set
   `GIT_URL = '<url>'` in the Kaggle runner (private repo: needs a token; public is simpler), **or**
 - zip the project folder **without** `.venv/` and `models/` and upload it as a Kaggle Dataset (keep `GIT_URL = None`).
