@@ -1,0 +1,147 @@
+﻿dataset,split,idx,sentiment_name,topic_name,text
+neu-esc,train,19376,neutral?,t0,bác check inbox giúp với ạ . em cảm ơn bác nhiều ạ .
+neu-esc,train,22654,neutral?,t0,góc pass khóa i i . uni english pass toeic học sợ không kịp trường pass nhu cầu inbox hoặc .
+neu-esc,train,19968,neutral?,t0,siêu ưu đãi khi lắp đặt các thiết bị nhà thông minh của fpt . anh chị có nhu cầu hãy liên hệ bên em . số điện thoại . fanpage fpt smart home hoàng .
+neu-esc,train,9899,neutral?,t1,trường đại học kinh tế quốc dân công bố điểm trúng tuyển đại học chính quy năm 2023 xét tuyển kết hợp phương thức 4 5 .
+neu-esc,train,15981,neutral?,t1,tức là trong tổ hợp xét tuyển của một số ngành thôi .
+neu-esc,train,5144,neutral?,t1,neu xét tuyển kết hợp nhà trường sẽ mở lại hệ thống từ ngày 16 7 20 7 cho các thí sinh chưa cập nhật số báo danh đợt 26 6 30 6 vào cập nhật lại .
+neu-esc,train,8255,neutral?,t2,mọi người cho em hỏi thí sinh tự do năm sau được xét học bạ như thường không ạ hay phải thi tn . em cảm ơn .
+neu-esc,train,1731,neutral?,t2,em có thểm tham khảo về công nghệ thông tin thiết kế và digital marketing tại vtc academy nhé chương trình họ theo mô hình tiếp cận năng lực và cam kết việc làm bằng văn bản ký kết .
+neu-esc,train,1423,neutral?,t2,ngành khoa học quản lý ổn không mọi người yêu ngành nv tôi khong .
+neu-esc,train,12600,neutral?,t3,đây là một ví dụ em nhé chủ thớt .
+neu-esc,train,15838,neutral?,t3,răng chị nỏ nói zọng nghệ an cho em nghe với .
+neu-esc,train,13044,neutral?,t3,sợi . sắc cầu vồng đê ơi .
+neu-esc,train,4421,neutral?,t4,gửi ở kí túc xá neu hoặc ở chân cầu vượt chỗ đầu giải phóng ấy .
+neu-esc,train,8296,neutral?,t4,cần nhượng phòng bên 79 cầu giấy 3 triệu 1 tháng .
+neu-esc,train,20998,neutral?,t4,quy định d đi học lớp quy định thông báo quy định sinh viên đi học bảo vệ chửi bất cập ví dụ ca ca học hôm trống ca phòng học lớp luôn học các bạn tài liệu gửi hôm đẩy xe giúp mỹ đình hôm bụng tinh tế nhaa .
+neu-esc,train,4029,neutral?,t5,cần tuyển dụng vị trí nhân viên fulltime partime chỉ tuyển nhân viên từ đủ 18 tuổi 40 tuổi yêu cầu partime đảm bảo làm việc tối thiểu 05 ngày tuần 01 ca ngày làm được thứ 7 và chủ nhật fulltime đảm bảo làm việc tối thiểu 06 ngày tuần 01 ca ngày làm được thứ 7 và chủ nhật thời gian làm việc fulltime xoay ca linh hoạt tự sắp xếp time ca sáng 8 17 ca tối 13 21 parttime xoay ca linh hoạt p1 8 12 p2 12 17 p3 18 22 thu nhập partime 6 tr8 triết khấu phụ cấp fulltime 9 tr2 triết khấu phụ cấp liên hệ trực tiếp để được hỗ trợ .
+neu-esc,train,22037,neutral?,t5,ngành báo báo già báo hy vọng ứng dụng khcn đầu tư tiền ngân sách họ .
+neu-esc,train,15148,neutral?,t5,chào gia đình quê dự nghiệp . chỗ trường thuê ạ .
+neu-esc,train,17425,neutral?,t6,laoj m m .
+neu-esc,train,14510,neutral?,t6,khoa học doanh nhân . gò éo đối phương góc mình .
+neu-esc,train,1520,neutral?,t6,thầy tuấn anh kìa .
+neu-esc,train,1278,neutral?,t7,ớt cay đấy cay nhảy mũ bảo hiểm hôm trường bao trời mùa hè hà nội xanh nắng . cưỡi giấc mơ trung hoa tấp xe ulis . chẳng hôm dại dội mũ bảo hiểm yên xe thay balo cú hôm . mũ thời trang không mặc không mua cổng trường mũ .
+neu-esc,train,22478,neutral?,t7,chào cậu tớ với cậu tầm tuổi nhau . tớ không có gì ngoài năng lực tích cực . cậu khi nào buồn và nghĩ nhiều cần gì cứ nhắn tớ nhé . tớ mong sẽ truyền được cho cậu ít nhiều năng lượng tích cực tớ an nhân .
+neu-esc,train,17481,neutral?,t7,lịch sử hiện thời mắt hiện thực với cug lịch sử đùa .
+neu-esc,train,5751,neutral?,t8,hó lạc . ngõ chùa láng . lạc cún hình . liên hệ giúp nhé . hậu tạ số điện thoại .
+neu-esc,train,8920,neutral?,t8,bạn nào cần học aptis cấp tốc đổi chuẩn đầu ra inbox chị nhé .
+neu-esc,train,13685,neutral?,t8,chờ lâu quá thì cậu có thể tập hợp mọi người viết tâm thư gửi lên bộ biết đâu sẽ nhanh hơn ấy .
+neu-esc,train,19512,neutral?,t9,đội sinh viên tình nguyện đồng hương hưng yên là một trong số đội tình nguyện đầu tiên của thành phố hà nội . vào đội các cộng tác viên sẽ được phát huy sở trường của mình cải thiện học hỏi và bộc lộ thêm được những kỹ năng mềm như làm việc nhóm giao tiếp hoàn thành deadline kết giao thêm bạn mới . link page hỗ trợ tân sinh viên .
+neu-esc,train,21685,neutral?,t9,sau 5 9 nhé k68 khai giảng xong sẽ nhận đồng phục .
+neu-esc,train,19219,neutral?,t9,đây không tham gia câu lạc bộ nào này .
+neu-esc,train,4968,positive?,t0,navip sòng bạc tài phiệt đầu tuần bát đua top tài xỉu navip club event siêu vip tặng iphone promax khoe ảnh đứng top tài xỉu hôm tim hội gửi ảnh fanpage lộc lá navip . com dấu fanpage navip sòng bạc tài phiệt thiệt đội ngũ chăm sóc khách hàng tận tình . đồ họa siêu nét hiệu ứng cực đẹp . nạp . út tốc độ cực nhanh .
+neu-esc,train,21590,positive?,t0,đam mê họ . định hướng đam mê suốt đời kinh khủng nâng nghề sĩ nghề kém hậu công năng phát triển công mắt đi địa ngục chờ đuổi nghỉ xong . trình độ chuyên gia khoa thu nhập sức sống . khoa hẻo khoa nhiễm viện phòng khám viêm gan thu nhập bv công vui vẻ nhẹ nhàng hạnh phúc thích . phục hồi chức năng khoa chất bs phục hồi chức năng hiếm trị thuốc kinh nghiệm thuốc . tương lai byt phép bs y học cổ truyền rộng phạm vi phục hồi chức năng cạnh tranh đấy . yêu nghề liệu gắn bó được .
+neu-esc,train,22342,positive?,t0,nay chúng mình cũng mê bạn áo xanh nhỉ .
+neu-esc,train,12209,positive?,t1,call for paper invitation to submit paper to the special issue of innovation development q are excited to announce the call for research paper for the q upcoming special issue of innovation development publication of the asia pacific economic review . as navigate through the intense summer heat our reliance lai online digital transformation and sustainable energy solution becomes increasingly critical . these theme are not just shaping our daily life but also setting the stage for pivotal research in . this quarter invite esteemed researcher to contribute their insight and scholarly work lai online digital transformation trend prospect for green energy encourage submission that explore innovative solution advancements and strategic insight in these areas . if you are interested please send your manuscripts to publication . org.vn with the subject journal main contact person full name paper title submission requirement are attached at the link submission deadline june still have question about the topic click lai online the picture now to decode them together and find creative research idea reference mckinsey company ibm nasati knowledge begin with research the special issue of innovation development is cornerstone in scholarly discourse recognised by vietnam state professorship council and included in the list of specialised scientific journal with research score of . points . join us in driving impactful research and shaping the future of sustainable development and technological innovation . eagerly await your contribution the asia pacific economic review is under the asia pacific economic center vapec research institute for innovation and development website . org.vn linkedin facebook fb.com vietnam impactup impactup.site imap imapvietnam.org v.innovate vinnovate.vn address thôi floor thai dong da hanoi email hello . org.vn hotline .
+neu-esc,train,16151,positive?,t1,dù sao những hoạt động này cũng đáp ứng chủ trương chiến lược gia tăng số lượng công bố của nhiều tổ chức khcn và gd của việt nam ta . có tích lũy về lượng mới dẫn đến thay đổi về chất . không nên soi mói quá . chủ trương trên có nói rõ chi tiết đến thế đâu cứ có báo công bố là khoa học việt nam lại tiến lên một bước . nên động viên khuyến khích đặc biệt là thưởng tiền . ai cũng vui .
+neu-esc,train,19513,positive?,t1,cảm ơn nội chứng chỉ hành nghề đa khoa phòng khám đổi chứng chỉ hành nghề nội đợi phép trách nhiệm chuyên môn chứng kỹ thuật nằm phạm vi hành nghề đa khoa luật khám chữa bệnh đề cập kiện đánh đa khoa đề kiên đánh bs chứng chỉ hành nghề đa khoa .
+neu-esc,train,1959,positive?,t2,cháu ơi cho cô hỏi nếu con cô không đỗ ngành mà đõi ngành thì có được thi chất lượng cao ngành không .
+neu-esc,train,16050,positive?,t2,giáo viên biến chất nữa .
+neu-esc,train,251,positive?,t2,cập nhật thời khóa biểu kỳ thu k k k check tâm hồn đẹp kỳ học nào .
+neu-esc,train,2055,positive?,t3,sướng phát khóc .
+neu-esc,train,18493,positive?,t3,hẳn cửa í . chúc may mắn .
+neu-esc,train,11402,positive?,t3,nội dung bài thật tuyệt vời .
+neu-esc,train,7721,positive?,t4,đồ ngon . hôm đầu toàn rong biển trộn cơm quen đồ ăn . hơi bẩn mua đầu lọc xịn chút mua lõi thay tầm đen rồi . da nhạy cảm thuốc ngứa đi ngứa lắm .
+neu-esc,train,6164,positive?,t4,lường bèo lắm hđong lắm khoản thu quỹ lắm phàn nàn lắm họp lắm kiểm tra chương trình đổi top toàn cầu bộ sách hảo .
+neu-esc,train,6128,positive?,t4,win spss eview ngon tiện ợ độ mỏng nhẹ xịn mac quất kia mà .
+neu-esc,train,1575,positive?,t5,tuyển nhân content video thị trường quốc tế kiếm trẻ nhiệt huyết năng động tham gia hành trình nội dung . lương triệu thưởng doanh trợ trưa công nghiên cứu nhu cầu khán giả xu hướng thị trường quốc tế tổng hợp tưởng nội dung lạ thú vị yêu khả năng viết content . thẳn thắn vui vẻ hòa đồng ham học hỏi . nghiệp đại học . đội ngũ trẻ trung nhiệt tình chân thành gia đình . đào kỹ năng chuyên môn tư . văn phòng tòa blustar trâu quỳ gia lâm hà nội . inbox liên hệ thông tin .
+neu-esc,train,15811,positive?,t5,chứng chỉ hành nghề chồng tứ trụ giấy phép hành nghề chồng được gọi ạ .
+neu-esc,train,12723,positive?,t5,những lý do sinh viên năm nhất nên làm công việc này khám phá tiềm năng làm sale sẽ giúp bạn khám phá và phát triển tiềm năng kinh doanh bên trong mình . bạn sẽ học cách xây dựng mối quan hệ với khách hàng tạo niềm tin và định hình thương hiệu những kỹ năng quan trọng không chỉ trong sale mà còn trong cuộc sống . tự định hình sự nghiệp tham gia sale sớm sẽ giúp bạn có cái nhìn rõ ràng hơn về sự nghiệp mà bạn muốn theo đuổi . bạn có thể tìm hiểu nhiều lĩnh vực khác nhau và xác định mục tiêu sự nghiệp của mình . phát triển kỹ năng giao tiếp sale đòi hỏi kỹ năng giao tiếp xuất sắc . bạn sẽ trở nên tự tin hơn trong việc thuyết phục người khác đàm phán và giải quyết vấn đề .
+neu-esc,train,9042,positive?,t6,chúc mừng chúc mừng bao giờ lo lót thi cho tốt thôi .
+neu-esc,train,23028,positive?,t6,chúc mừng gái yêu .
+neu-esc,train,3445,positive?,t6,chúc bác và gia đình bạn luôn khỏe mạnh nhé .
+neu-esc,train,19529,positive?,t7,việt nam chiến thắng đế quốc kỷ dám nhỉ .
+neu-esc,train,2649,positive?,t7,đoàn đồng hành đội bóng trường đại học kinh tế quốc dân giải bóng đá sinh viên thành phố . hà nội thiên khôi cup trải trận tứ kết kịch chiến thắng loạt sút penalty cân não đại học kinh tế quốc dân tiến vòng kết đối đầu đội bóng trường đại học phenikaa . tân binh mùa giải màn thể hiện phenikaa vòng đấu lĩnh quyết tâm độ họ . trận đọ sức hứa hẹn đem cảm xúc khán giả . thông chi tiết h địa sân vận động trung tâm văn hóa tt tt hoàng mai hình thức di đi xe ban tổ chức bố trí h kí túc xá di mặt h sân vận động trung tâm văn hóa tt tt hoàng mai đăng ký tham gia join zalo sân tiếp lửa cổ vũ chàng trai nhé .
+neu-esc,train,6657,positive?,t7,đề ca câu sản đại hàng hóa xu hướng sai giải câu tập tỷ suất lao động thặng dư câu xu hướng kinh tế hội nhập biến lực sản xuất việt nam biến quy mô kinh tế dựa nội dung trình bày câu .
+neu-esc,train,13174,positive?,t8,ban đối ngoại cảm ơn ynm ạ .
+neu-esc,train,12517,positive?,t8,em xin chân thành cạm ơn ynm và photographer thêm 10 lần nữa ạ .
+neu-esc,train,4813,positive?,t8,bạn tâm đã liên hệ mình rồi ạ cảm ơn admin duyệt bài ạ .
+neu-esc,train,17121,positive?,t9,biết kết quả giải sau chưa top 1 top 2 đây .
+neu-esc,train,4639,positive?,t9,chào ạ . anh em giải đáp thắc mắc ạ . apply ban múa câu lạc bộ nghệ thuật câu lạc bộ dạy học tình nguyện . anh em đi vấn các bạn múa đoạn tầm ạ . many thanks .
+neu-esc,train,4805,positive?,t9,htc nha câu lạc bộ có hoạt động siêu ý nghĩa và vui nha tham gia câu lạc bộ sẽ có thêm nhiều kinh nghiệm trong việc dạy học hơn nhé đặc biệt là hợp đồng của htc sẽ rất gắn liền với trong nghề luôn đó . tham gia htc đúng kiểu siêu ý nghĩa trong quãng thời gian học đại học luôn .
+neu-esc,train,18854,negative?,t0,mình muốn gửi tới các bạn ai đang có nhu cầu xin việc ở td thì không nên lên trang web này vì đây là trang web giả tạo khi bạn vào page này sẽ có đường link để bạn khai thông tin và sau đó sẽ chụp ảnh gửi toàn bộ giấy tờ khi xin việc lên link và bọn lừa đảo sẽ lấy thông tin của chúng ta dựa vào đây nên mình đưa lên group để mọi người cảnh giác ạ .
+neu-esc,train,3100,negative?,t1,hỏi thông tin mà bạn lại đăng ẩn danh mà thông tin tài khoản người ta không nên đăng công khai như này đâu bạn ơi .
+neu-esc,train,7289,negative?,t1,chuyện lò ấp thạc sĩ tiến sĩ bao năm qua . những sai phạm trong tổ chức đào tạo trình độ thạc sĩ tiến sĩ của học viện khoa học xã hội trực thuộc viện hàn lâm khoa học xã hội việt nam đã khiến báo chí tặng cho học viện này danh hiệu lò ấp tiến sĩ . nhân vật điển hình là giáo sư tiến sĩ võ khánh vinh ông vinh hướng dẫn cùng lúc 44 học viên cao học các ngành luật chính sách công công tác xã hội và 12 nghiên cứu sinh tiến sĩ . ngày 15 07 2019 đại học kinh tế thành phố hồ chí minh công bố danh sách ứng viên đã nộp hồ sơ xét công nhận đạt tiêu chuẩn chức danh giáo sư phó giáo sư năm 2019 tại trường đại học kinh tế thành phố . hồ chí minh danh sách gồm 8 người . trong 6 năm từ 2013 đến 2019 tiến sĩ đinh công khải hướng dẫn 240 học viên cao học bình quân một năm là 40 người . chúng tôi tiếp cận tiến sĩ . giảng viên làm việc trong lĩnh vực đào tạo sau đại học một trường đại học công lập tại thành phố hồ chí minh người chuyên cung cho những học viên có nhu cầu mua luận văn tốt nghiệp . giá mỗi luận văn như điều tra của tuoitre.vn là 15 triệu đồng .
+neu-esc,train,3601,negative?,t1,cảnh báo sinh viên khu đại học bách kinh xây viết chân run rẩy câu mạng mình . giới thiệu sơ sinh viên k neu . hôm đi học ca chiều trường bến xe buýt đối diện bệnh viện bạch mai chờ xe e nhà . đi xe bus khu vực đông đúc xảy ra . đời chữ ngờ . đứng bấm điện thoại bến xe buýt đứng chờ bến nam niên mặc áo chống nắng đội mũ kín mít đứng trái liếc mình . nhích dần đứng hơi lo lắng dần may thay xe bus cập bến . vội vàng đi xe ta đi xe vắng lơ xe hành chỗ ghế cạnh cửa đàn kia hàng ghế đối diện . ta liếc hoảng lắm cố cắm mặt điện thoại cảm giác bất an . ta đứng tiến thẳng ghế rúm ró định hét toáng ta bịt mồm thẳng mắt xong điện thoại dại đầu xe phản kháng đành ngậm ngùi rút điện thoại ý . điện thoại giơ lockscreen tiếp màn hình khóa đứng bến xe buýt trông quá . trông xịn dõng dạc vòng kết thi kiếm tài năng âm nhạc now you see me kỳ hội tổ chức câu lạc bộ âm nhạc mec . đơn đăng ký vé cửa miễn phí vòng kết hội trường a trường đại học kinh tế quốc dân chần chừ đăng ký link đăng ký .
+neu-esc,train,11474,negative?,t2,đúp lp được lớp không bạn .
+neu-esc,train,22725,negative?,t2,thất vọng thầy quá .
+neu-esc,train,4750,negative?,t2,các em nhờ tư vấn về trường các anh chị khóa trước kiểu ngồn này lành các em đừng vào .
+neu-esc,train,18867,negative?,t3,mẹ lên ở trọ cùng thì là gia đình khá giả thì khả năng mua xe điện cho con đi học là được nhỉ . còn chuyện đi xe đạp có người chịu có người không nhưng đăng lên nhóm như này . sẽ có những người khó khăn như mình thấy tủi thân . 5 năm đạp xe đạp đi học đại học của mình lại bị các bạn xem như người kì lạ ạ .
+neu-esc,train,19372,negative?,t3,em mới khám phá ra sốc thật .
+neu-esc,train,18611,negative?,t3,thương next hẹn không lại .
+neu-esc,train,10228,negative?,t4,bác nói hợp lý tăng lương mấy công chức nhà nc giáo viên nó mừng . chứ bv mừng méo gì áp lực vcl tự thu tự chi tiền mua cái máy tính còn kì kèo éo dám mua muốn lắp cái gì cũng đợi đấu thầu tiền về có quyết định này quy định mới dám chi . nghe tới tăng lương mấy bà kế toán đã xồn xồn lên không vui .
+neu-esc,train,758,negative?,t4,đi mama trọ . xong trường đi lạc tùm lum .
+neu-esc,train,11513,negative?,t4,h học h soi gương phòng không cầu .
+neu-esc,train,1513,negative?,t5,đúng mà bản thân công nhận điều này mà đi làm thực tế cơm áo gạo tiền phải quay xe thôi . bị phó khoa lấy hết tiền pt của đánh với lý do không có chứng chỉ hành nghề lẻ tháng phải mấy triệu . bảo bao giờ có chứng chỉ hành nghề lẻ tôi cho các hưởng mà biết thừa giờ nhanh cũng phải ít nhất 5 năm mới có . giờ chỉ cần đậu ck1 lẹ lẹ để kiếm cái chứng chỉ hành nghề thôi . trước còn mơ ước cảm ơn trường top . giờ thì có ck1 trường bét cũng học thôi .
+neu-esc,train,2758,negative?,t5,những cái bạn nói là một phần trong công việc . ở đâu cũng vậy thôi . mình thấy những việc đó cũng khá bình thường nhưng bạn lại suy nghĩ hơi nặng nề nên thấy khó chịu . kiến thức thì cải thiện dần thôi nhưng cũng không ai biết hết được . bác sĩ đầu ngành ở bệnh viện tuyến cuối mà họ còn hội chuẩn mà . chấp nhận thực tế mình không thể biết hết mọi thứ . cái nào không biết thì bạn tư vấn cho bệnh nhân khám bác sỹ khác chuyên khoa khác hay bệnh viện khác .
+neu-esc,train,11146,negative?,t5,chuyên khoa lẻ phòng khám bạn . nghỉ công ty phòng khám đa khoa nghỉ được quyết định nghỉ đi việc . đậu ck nghỉ giám đốc gọi phòng kêu tiếp đi bv không bs chứng chỉ hành nghề chuyên khoa học ck dại khờ nói .
+neu-esc,train,7680,negative?,t6,chia buồn gia đình chị . mong yên nghỉ .
+neu-esc,train,18303,negative?,t6,thật sự đau lòng xót xa cho các chị và gia đình em mong 2 chị sớm an nghỉ .
+neu-esc,train,21414,negative?,t6,chia buồn với trước nha chắc sắp bị ghost .
+neu-esc,train,4974,negative?,t7,tuân thủ giao thông thế à .
+neu-esc,train,2296,negative?,t7,cháy tầng 1 các tầng khác bị nhà hàng xóm bao quanh nên không thoát ra được ý ạ .
+neu-esc,train,21339,negative?,t7,ta phân biệt khái niệm trùng lặp đạo văn . trùng lặp tương đồng câu chữ nội dung . đạo văn hành vi chép tưởng tác phẩm thể hiện tưởng mượn tức trích . trùng lặp coi đạo văn trích ràng tác phẩm gốc . chép tưởng trùng lặp ví dụ paraphase trùng nghĩa trích đạo văn . mềm kiểm tra đạo văn phát hiện trùng lặp kết tỉ lệ similarity unique plagiarism . trùng hẳn đạo văn trùng trích chưa . ta coi mềm công cụ bổ trợ phát hiện đạo văn thay copy search câu google tải tài liệu kết quả . áp tỉ lệ cố định giải pháp bớt gánh thầy phụ trách chất nâng thức đạo văn học . đạo văn học mơ hồ nhẹ quy định vất vả thầy xuân đi rà soát đạo văn tổng hợp kết gửi minh chứng học . nhân công cụ tài nguyên kiểm soát đạo văn tiến hành một . giai đoạn đầu dựa trùng lặp mềm kiểm tra đạo văn thước đo tạm thời quán triệt nâng thức đạo văn . kha trường hợp chép não giúp sinh viên trích nội dung đọc paraphase . giai đoạn hai ta xét trùng lặp tưởng . tác phẩm học thuật báo khoa học luận án giai đoạn tất nhiên cực kỳ vất vả bộ phận kiểm tra đạo văn đọc nội dung nội dung chép lẫn gốc trường hợp dịch ngôn ngữ khác . sinh viên mắt lẽ giai đoạn đầu chấp rồi . trường tạp chí triệt giai đoạn đầu trường hợp sinh viên chép toàn bộ luận văn trường biết . học phí thu chục triệu sẵn sàng chi chục ngàn quét luận văn sinh viên .
+neu-esc,train,18334,negative?,t8,cảnh giác mọi người ơi mình vừa bị lừa 150 không ấy ạ . chuyện là mình vừa gặp một ông chú ở đầu ngõ tự do mặc áo nắng xanh tím than quần đen đội mũ bảo hiểm da ngăm trông có vẻ cần sự giúp đỡ thì mình đứng lại hỏi thì chú bảo xe hỏng thiếu tiền sửa xe nên đi bộ sang nhà đứa em học kinh tế quốc dân thì bạn ý chưa về nên chú phải ra đây nhờ . sau mình hỏi chỗ chú sửa xe ở đâu và mình đưa chú 1 đoạn đến ngã tư tđn ltn thì dừng lại . lúc đầu chú bảo sửa xe hết 295 không chú có 200 không thiếu 95 không nên muốn nhờ mình bank . sau lúc sau lại đưa mình 110 không tiền mặt bảo mình bank 260 không . sau lúc chú đọc số tài khoản của người sửa xe mình cũng thắc mắc sao sửa xe lần đầu mà thuộc lòng số tài khoản luôn hay . anyways mình vẫn chuyển với nd là số điện thoại của mình để chú chuyển lại . sau có xin tên chú hải chả biết phải tên thật không nữa với số điện thoại à chú bảo điện thoại chú bị vỡ hết . sau lúc ý mình cũng nháy máy luôn không thấy ai nghe nhưng mà vẫn có chuông thì tức là điện thoại không hỏng mà đúng không sau về thì gọi lại thì lại có người nghe bảo gọi nhầm máy . thôi xong . bị lừa . mà lúc sau chú bảo sửa xe ở tận bến xe giáp bát mà không biết sao bảo mình chở lên ngã tư làm gì sau mình thấy chú đi bộ ngược lại về ngõ tự do . ai gặp phải chú mà chú nhờ giúp thì tránh nha . vì mình vừa giúp rồi ạ . edit mình vừa bị lừa lúc 13 39 ấy ạ . mọi người ai đang gần ngõ tự do mà thấy chú nào giống mô tả của mình thì comment mình biết với ạ . để mình ra đòi lại công lý .
+neu-esc,train,13198,negative?,t8,ôi ơi đi học mặc quần áo là được rồi mà không phải ba lỗ quần đùi là được .
+neu-esc,train,4755,negative?,t8,infor nữ ghế a phòng cấp hai ca môn qlda . câu thôi nhưng mà giọng thương quá .
+neu-esc,train,2383,negative?,t9,thật sự quá thất vọng về charm of law năm nay . không biết tiêu chuẩn sắc đẹp của chương trình thế nào chứ ngồi ở dưới xem phần trao giải mà mình phải bực mình đứng dậy đi về . bạn á khôi 1 ngoại hình lẫn tài năng mờ nhạt trong tất cả các vòng thi và còn không lọt top vòng thi nào . á khôi 2 thì trả lời ứng xử thậm chí còn không nói được gì mình nhớ cứ ậm ừ xong nói vớ vẩn được 2 câu xong lại thôi . những bạn nổi bật hơn thì lại không lọt top . mình nhớ có khán giả nào bình luận phản . xem thêm .
+neu-esc,train,5746,negative?,t9,năm nhất nên đi làm thêm không ạ chủ yếu muốn kiếm thêm tiền ăn để ba mẹ đỡ lo ấy mà em lại sợ lơ là việc học em cũng chẳng dám tham gia câu lạc bộ .
+neu-esc,train,22406,negative?,t9,chết ồi toàn gặp ban tổ chức sao á .
+neu-esc,train,13637,toxic?,t0,pic amp video địt nhau với em kế toán siêu phẩm vú to body tuyệt phẩm
+neu-esc,train,8441,toxic?,t0,khi chơi cá cược bóng đá anh em bet thủ chỉ hay chọn đặt cược vào các loại kèo thông dụng như kèo châu á kèo châu âu kèo tài xỉu nhưng ngoài ra còn có nhiều loại kèo phụ có thể giúp anh em thu nhiều lợi nhuận bài viết hôm nay chúng tôi sẽ gửi đến anh về kèo chẵn lẻ
+neu-esc,train,22224,toxic?,t0,dấu hiệu sới xóc đĩa bịp anh em có biết không chứ bị bịp mấy lần cay vãi lồn
+neu-esc,train,13099,toxic?,t1,sát nút mới thông báo địt mẹ .
+neu-esc,train,984,toxic?,t1,vâng đau lắm nhưng đành phải làm thôi bác . tiếc là không như nước ngoài họ chỉ cần 1 bài đạo văn đã đủ mất chức còn ở việt nam với số lượng bài báo giả mạo lớn như vậy nhưng vẫn như không có chuyện gì xảy ra báo chí và truyền thông vẫn im lặng để rồi họ vẫn cứ hưởng tiền ngân sách vẫn đăng báo dởm báo rác lĩnh tiền thật .
+neu-esc,train,20603,toxic?,t2,khóa trường đứa năng lực đừng trừ trường hợp giỏi vãi lồn cắm mặt xuất sắc học đấy .
+neu-esc,train,5679,toxic?,t2,học phí thì tăng tầm lần lương thì tăng được tầm lần so với thời trước chi phí thì tăng lạm phát cao chất lượng giáo dục thì như cứt đào tạo thì đại trà giờ đứa đéo nào cũng học đại học ra được phổ cập đại học để tăng nguồn thu thôi chứ có cái đéo gì
+neu-esc,train,22500,toxic?,t2,địt mẹ nói thật trình độ của giáo viên giờ như cái đầu buồi tao
+neu-esc,train,5201,toxic?,t3,bố đau bụn ị chảy .
+neu-esc,train,12535,toxic?,t3,má con đỉ này đã đỉ thõa còn ngu chói chặt là clgv con đỉ ơi .
+neu-esc,train,6797,toxic?,t3,địt mẹ giống điểm thành phần thuế của .
+neu-esc,train,13883,toxic?,t4,hôm trước chỗ này . địt mẹ đông xong đứa khóa cổ . cã lũ đứng im luôn .
+neu-esc,train,5925,toxic?,t4,địt mẹ trước mua chai ts này
+neu-esc,train,19068,toxic?,t4,hồi em đi trực ở viện có bệnh nhân đến xin tiền bảo nằm khoa tiêu hóa không có tiền nằm viện các thứ . xong khóc lóc xin tiền thế em thấy thương bảo em dẫn về khoa em kêu gọi mọi người cùng giúp đóng viện phí . thì bác ấy nhìn em với anh mắt dao cau khoét mỏm đá chửi em không trượt phát nào .
+neu-esc,train,20307,toxic?,t5,công ty như lồn sếp thì hãm đồng nghiệp hai mặt công việc thì đéo đâu vào đâu
+neu-esc,train,13804,toxic?,t6,dỏng lỗ tai cây của lên mà nghe này em . như em không phải muốn làm bạn đâu mà muốn làm người thứ ba sau đó leo lên để thành chính thất ấy . mồm leo lẻo chỉ làm bạn mà cứ dí lấy người ta biết người ta có người yêu lâu năm còn cứ inbox inbox . người ta còn tử tế lịch sự đợi hết kì quân sự mới block chứ phải là người yêu nó tiễn đi rồi . nghe cái giọng nhớt dcd .
+neu-esc,train,15740,toxic?,t6,thạc sỹ ôn khoai ck kiến thức lẫn chọi chọi bác sĩ nội trú căng bể đầu luôn .
+neu-esc,train,9905,toxic?,t6,vcl địt mẹ cái gì thế nếu là thì có điên mới đi uống rượu với đứa con gái khác .
+neu-esc,train,9766,toxic?,t7,bọn nó bán nước hết rồi chế độ độc tài độc đảng thì không cơ chế nào có thể ngăn bọn chúng bán nước cả 
+neu-esc,train,6896,toxic?,t7,an ninh của việt nam cộng hòa quá lỏng lẻo để cho đối phương ám sát giết hại một cách không ghê tay
+neu-esc,train,1330,toxic?,t7,musk lecun kình hồi musk loan phe dân chủ biden voter id dân nhập cư trái phép hình thức gian lận bầu cử . lecun toàn nhảm . lecun phe dân chủ meta musk xu hướng ủng hộ phe cộng hòa .
+neu-esc,train,21489,toxic?,t8,địt cụ cảm ơn đã gợi ý
+uit-vsfc,train,735,negative,lecturer,giảng bài khó hiểu .
+uit-vsfc,train,400,negative,lecturer,không hiểu cách chấm bài thi của thầy .
+uit-vsfc,train,8649,negative,lecturer,cô nói chậm chậm chút để sinh viên dễ tiếp thu kịp .
+uit-vsfc,train,7645,negative,training_program,"bài tập lớn năm nay khá hay , tuy nhiên giảng viên chưa hướng dẫn sinh viên làm nhiều ."
+uit-vsfc,train,3421,negative,training_program,"tài liệu nên cấp một lần trong đầu môn học , tránh trường hợp học rồi mới đưa tài liệu gây khó khăn cho sinh viên ."
+uit-vsfc,train,10443,negative,training_program,"môn này cần tăng lên 4 tín chỉ thay vì là 3 vì mạng truyền thông và di động có kiến thức khá rộng , môn này không có thực hành nên có thực hành vì mạng di động mà không thực hành thì khá trừu tượng ."
+uit-vsfc,train,10315,negative,facility,nhất thiết phải đảm bảo yêu cầu về cơ sở vật chất phù hợp với môn học .
+uit-vsfc,train,921,negative,facility,cải tiến trang thiết bị phòng thực hành .
+uit-vsfc,train,7202,negative,facility,"phòng lab khoa wzjwz16 trên tầng 3 nhà wzjwz17 quá chật chội , bụi bám lớp dày , trang thiết bị mạng đầu tư đắt tiền nhưng ít khi sử dụng tới , không kiểm tra lau chùi sẽ dẫn đến hỏng hóc , quạt không còn quay ."
+uit-vsfc,train,10993,negative,others,"học thấy rất phí thời gian , kiến thức thu được chẳng bao nhiêu ."
+uit-vsfc,train,9504,negative,others,còn nhiều chỗ thiếu sót .
+uit-vsfc,train,6832,negative,others,chưa bao giờ học không biết .
+uit-vsfc,train,2693,neutral,lecturer,cách trình bày giữa thầy thực hành và thầy lý thuyết khác nhau .
+uit-vsfc,train,8260,neutral,lecturer,phong cách thầy rất giống wzjwz225 .
+uit-vsfc,train,3219,neutral,lecturer,thầy cho nhiều bài tập .
+uit-vsfc,train,7759,neutral,training_program,kết hợp lý thuyết và thực hành .
+uit-vsfc,train,5476,neutral,training_program,kiến thức xã hội .
+uit-vsfc,train,5663,neutral,training_program,bài tập làm đầy đủ .
+uit-vsfc,train,2517,neutral,facility,"phòng học được trang bị tốt hơn , đảm bảo tốt cho công tác giảng dạy ."
+uit-vsfc,train,10336,neutral,facility,"mong ban quản lý cơ sở ý kiến giúp chúng em , em xin cảm ơn !"
+uit-vsfc,train,1301,neutral,facility,tăng cường thiết bị .
+uit-vsfc,train,6888,neutral,others,không rõ .
+uit-vsfc,train,7816,neutral,others,kiểm tra thường xuyên .
+uit-vsfc,train,9034,neutral,others,tại do tuần thi .
+uit-vsfc,train,2902,positive,lecturer,thầy dạy rất hay giải nhiều bài tập .
+uit-vsfc,train,6017,positive,lecturer,nhưng trên hết tụi em vẫn biết đó là ý tốt của thầy .
+uit-vsfc,train,9140,positive,lecturer,dạy nhiệt tình và tận tâm .
+uit-vsfc,train,1486,positive,training_program,một số vấn đề cơ bản giảng viên nên lược bớt để không tốn thời gian .
+uit-vsfc,train,11192,positive,training_program,thật sự nếu chịu lên lớp ngoài nghe giảng và ghi nhớ thêm phân tích kết hợp thực tế là sẽ làm tốt các bài thi của thầy .
+uit-vsfc,train,7373,positive,training_program,phần nghe nói được cải thiện .
+uit-vsfc,train,4613,positive,facility,"cô rất nhiệt tình trong hoạt động giảng dạy , công bằng trong đánh giá , rất quan tâm đến sinh viên ."
+uit-vsfc,train,2129,positive,facility,"lớp học rộng rãi , giãng viên dạy nhiệt tình ."
+uit-vsfc,train,357,positive,facility,phòng thực hành tốt .
+uit-vsfc,train,7376,positive,others,style chất ( y ) .
+uit-vsfc,train,3656,positive,others,giúp em biết được một phần thực tế của công việc sau này .
+uit-vsfc,train,11066,positive,others,cám ơn ạ .

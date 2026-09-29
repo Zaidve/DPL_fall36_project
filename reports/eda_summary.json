@@ -1,0 +1,796 @@
+{
+  "generated_at": "2026-09-29T14:52:27",
+  "on_kaggle": false,
+  "seed": 42,
+  "integrity": {
+    "passed": true,
+    "row_counts": {
+      "neu-esc/train": 23048,
+      "neu-esc/val": 3305,
+      "neu-esc/test": 6613,
+      "uit-vsfc/train": 11426,
+      "uit-vsfc/val": 1583,
+      "uit-vsfc/test": 3166
+    }
+  },
+  "labels": {
+    "neu-esc": {
+      "sentiment": {
+        "names": [
+          "neutral?",
+          "positive?",
+          "negative?",
+          "toxic?"
+        ],
+        "confirmed": false,
+        "train_counts": [
+          15936,
+          2897,
+          3630,
+          585
+        ],
+        "imbalance_ratio": 27.24102564102564,
+        "norm_entropy": 0.6493341884285035,
+        "class_weights": [
+          0.36157128514056225,
+          1.9889540904383844,
+          1.58732782369146,
+          9.84957264957265
+        ],
+        "majority_baseline_test": {
+          "accuracy": 0.6892484500226826,
+          "macro_f1": 0.20401038403007787
+        },
+        "jsd_train_val": 0.001815405674110678,
+        "jsd_train_test": 0.003185668058521263
+      },
+      "topic": {
+        "names": [
+          "t0",
+          "t1",
+          "t2",
+          "t3",
+          "t4",
+          "t5",
+          "t6",
+          "t7",
+          "t8",
+          "t9"
+        ],
+        "confirmed": false,
+        "train_counts": [
+          281,
+          628,
+          7355,
+          10078,
+          1647,
+          564,
+          1032,
+          536,
+          465,
+          462
+        ],
+        "imbalance_ratio": 35.86476868327402,
+        "norm_entropy": 0.669300929022204,
+        "class_weights": [
+          8.202135231316726,
+          3.6700636942675158,
+          0.3133650577838205,
+          0.22869616987497518,
+          1.3993928354584093,
+          4.0865248226950355,
+          2.2333333333333334,
+          4.3,
+          4.956559139784947,
+          4.988744588744589
+        ],
+        "majority_baseline_test": {
+          "accuracy": 0.4358082564645395,
+          "macro_f1": 0.0607056345444971
+        },
+        "jsd_train_val": 0.0020340852921025736,
+        "jsd_train_test": 0.0031488750655823635
+      }
+    },
+    "uit-vsfc": {
+      "sentiment": {
+        "names": [
+          "negative",
+          "neutral",
+          "positive"
+        ],
+        "confirmed": true,
+        "train_counts": [
+          5325,
+          458,
+          5643
+        ],
+        "imbalance_ratio": 12.320960698689957,
+        "norm_entropy": 0.7583845715634543,
+        "class_weights": [
+          0.7152425665101722,
+          8.315866084425036,
+          0.674936499497903
+        ],
+        "majority_baseline_test": {
+          "accuracy": 0.5022109917877448,
+          "macro_f1": 0.22287636669470143
+        },
+        "jsd_train_val": 0.019973287753220596,
+        "jsd_train_test": 0.028719831635759405
+      },
+      "topic": {
+        "names": [
+          "lecturer",
+          "training_program",
+          "facility",
+          "others"
+        ],
+        "confirmed": true,
+        "train_counts": [
+          8166,
+          2201,
+          497,
+          562
+        ],
+        "imbalance_ratio": 16.430583501006037,
+        "norm_entropy": 0.6072684503042919,
+        "class_weights": [
+          0.34980406563801125,
+          1.297819173103135,
+          5.74748490945674,
+          5.082740213523132
+        ],
+        "majority_baseline_test": {
+          "accuracy": 0.7233101705622236,
+          "macro_f1": 0.20986070381231672
+        },
+        "jsd_train_val": 0.03165721061318311,
+        "jsd_train_test": 0.013498188878289625
+      }
+    }
+  },
+  "task_dependence": {
+    "neu-esc": {
+      "cramers_v": 0.17682174432413902,
+      "nmi": 0.03444279852669494,
+      "chi2_p": 0.0,
+      "strength": "weak"
+    },
+    "uit-vsfc": {
+      "cramers_v": 0.35176460376379165,
+      "nmi": 0.13257738090750817,
+      "chi2_p": 0.0,
+      "strength": "strong"
+    }
+  },
+  "lengths": {
+    "neu-esc": {
+      "n_words_p95_train": 81.0,
+      "n_words_p99_train": 207.52999999999884,
+      "n_words_max": 1578
+    },
+    "uit-vsfc": {
+      "n_words_p95_train": 33.0,
+      "n_words_p99_train": 52.0,
+      "n_words_max": 159
+    }
+  },
+  "tokens": {
+    "neu-esc": {
+      "vinai/phobert-base-v2": {
+        "p50": 14.0,
+        "p95": 76.0,
+        "p99": 190.0,
+        "max": 1343.0,
+        "recommended": 80,
+        "trunc_pct_at_rec": 4.586081221797987,
+        "trunc_pct_at": {
+          "64": 6.3519611246095105,
+          "96": 3.41461298160361,
+          "128": 1.9784796945505032,
+          "192": 0.9805623047552934,
+          "256": 0.6117667476570635
+        }
+      },
+      "xlm-roberta-base": {
+        "p50": 17.0,
+        "p95": 94.0,
+        "p99": 231.0,
+        "max": 1748.0,
+        "recommended": 96,
+        "trunc_pct_at_rec": 4.763970843457132,
+        "trunc_pct_at": {
+          "64": 8.378167303019785,
+          "96": 4.763970843457132,
+          "128": 2.967719541825755,
+          "192": 1.423116973273169,
+          "256": 0.8807705657757723,
+          "512": 0.21259979173897953
+        }
+      },
+      "bert-base-multilingual-cased": {
+        "p50": 17.0,
+        "p95": 97.0,
+        "p99": 241.05999999999767,
+        "max": 1869.0,
+        "recommended": 112,
+        "trunc_pct_at_rec": 3.9612981603609856,
+        "trunc_pct_at": {
+          "64": 8.942207566817077,
+          "96": 5.050329746615759,
+          "128": 3.1586254772648386,
+          "192": 1.518569940992711,
+          "256": 0.9111419645956265,
+          "512": 0.2342936480388754
+        }
+      }
+    },
+    "uit-vsfc": {
+      "vinai/phobert-base-v2": {
+        "p50": 11.0,
+        "p95": 30.0,
+        "p99": 46.0,
+        "max": 129.0,
+        "recommended": 32,
+        "trunc_pct_at_rec": 3.9646420444600032,
+        "trunc_pct_at": {
+          "64": 0.23630316821284789,
+          "96": 0.017503938386136883,
+          "128": 0.008751969193068442,
+          "192": 0.0,
+          "256": 0.0
+        }
+      },
+      "xlm-roberta-base": {
+        "p50": 15.0,
+        "p95": 39.0,
+        "p99": 59.0,
+        "max": 179.0,
+        "recommended": 48,
+        "trunc_pct_at_rec": 2.3367757745492734,
+        "trunc_pct_at": {
+          "64": 0.7264134430246806,
+          "96": 0.07876772273761597,
+          "128": 0.017503938386136883,
+          "192": 0.0,
+          "256": 0.0,
+          "512": 0.0
+        }
+      },
+      "bert-base-multilingual-cased": {
+        "p50": 14.0,
+        "p95": 38.0,
+        "p99": 58.0,
+        "max": 176.0,
+        "recommended": 48,
+        "trunc_pct_at_rec": 2.1529844214948364,
+        "trunc_pct_at": {
+          "64": 0.67390162786627,
+          "96": 0.0875196919306844,
+          "128": 0.017503938386136883,
+          "192": 0.0,
+          "256": 0.0,
+          "512": 0.0
+        }
+      }
+    }
+  },
+  "vocab": {
+    "splits": [
+      {
+        "dataset": "neu-esc",
+        "split": "train",
+        "types": 11103,
+        "tokens": 571896,
+        "oov_types_pct": 0.0,
+        "oov_tokens_pct": 0.0
+      },
+      {
+        "dataset": "neu-esc",
+        "split": "val",
+        "types": 4956,
+        "tokens": 83035,
+        "oov_types_pct": 11.380145278450364,
+        "oov_tokens_pct": 0.7828024327090986
+      },
+      {
+        "dataset": "neu-esc",
+        "split": "test",
+        "types": 6810,
+        "tokens": 172084,
+        "oov_types_pct": 18.046989720998532,
+        "oov_tokens_pct": 0.9280351456265544
+      },
+      {
+        "dataset": "uit-vsfc",
+        "split": "train",
+        "types": 2514,
+        "tokens": 163492,
+        "oov_types_pct": 0.0,
+        "oov_tokens_pct": 0.0
+      },
+      {
+        "dataset": "uit-vsfc",
+        "split": "val",
+        "types": 1157,
+        "tokens": 21642,
+        "oov_types_pct": 9.420916162489196,
+        "oov_tokens_pct": 0.5267535347934572
+      },
+      {
+        "dataset": "uit-vsfc",
+        "split": "test",
+        "types": 1581,
+        "tokens": 45023,
+        "oov_types_pct": 16.824794433902593,
+        "oov_tokens_pct": 0.6507784909934922
+      }
+    ],
+    "cross_dataset_train": {
+      "shared_types": 1934,
+      "jaccard": 0.1655396730291877,
+      "pct_uit_types_in_neu": 76.92919649960223,
+      "pct_neu_types_in_uit": 17.418715662433577
+    }
+  },
+  "uit_emoticons": {
+    "doubledot": {
+      "symbol": ":",
+      "count": 85,
+      "texts": 84,
+      "pct_texts_negative": 1.352112676056338,
+      "pct_texts_neutral": 1.5283842794759825,
+      "pct_texts_positive": 0.0886053517632465
+    },
+    "colonsmile": {
+      "symbol": ":)",
+      "count": 27,
+      "texts": 27,
+      "pct_texts_negative": 0.15023474178403756,
+      "pct_texts_neutral": 0.21834061135371177,
+      "pct_texts_positive": 0.3189792663476874
+    },
+    "fraction": {
+      "symbol": "/",
+      "count": 19,
+      "texts": 18,
+      "pct_texts_negative": 0.15023474178403756,
+      "pct_texts_neutral": 1.3100436681222707,
+      "pct_texts_positive": 0.0708842814105972
+    },
+    "colonsmilesmile": {
+      "symbol": ":d",
+      "count": 12,
+      "texts": 12,
+      "pct_texts_negative": 0.07511737089201878,
+      "pct_texts_neutral": 0.21834061135371177,
+      "pct_texts_positive": 0.12404749246854509
+    },
+    "colonsad": {
+      "symbol": ":(",
+      "count": 11,
+      "texts": 11,
+      "pct_texts_negative": 0.20657276995305163,
+      "pct_texts_neutral": 0.0,
+      "pct_texts_positive": 0.0
+    },
+    "coloncontemn": {
+      "symbol": ":3",
+      "count": 9,
+      "texts": 9,
+      "pct_texts_negative": 0.03755868544600939,
+      "pct_texts_neutral": 0.43668122270742354,
+      "pct_texts_positive": 0.0886053517632465
+    },
+    "vdotv": {
+      "symbol": "v.v",
+      "count": 8,
+      "texts": 8,
+      "pct_texts_negative": 0.13145539906103285,
+      "pct_texts_neutral": 0.0,
+      "pct_texts_positive": 0.0177210703526493
+    },
+    "colonlove": {
+      "symbol": "<3",
+      "count": 7,
+      "texts": 7,
+      "pct_texts_negative": 0.0,
+      "pct_texts_neutral": 0.0,
+      "pct_texts_positive": 0.12404749246854509
+    },
+    "colonbigsmile": {
+      "symbol": ":v",
+      "count": 5,
+      "texts": 5,
+      "pct_texts_negative": 0.056338028169014086,
+      "pct_texts_neutral": 0.0,
+      "pct_texts_positive": 0.0354421407052986
+    },
+    "dotdotdot": {
+      "symbol": "...",
+      "count": 5,
+      "texts": 5,
+      "pct_texts_negative": 0.07511737089201878,
+      "pct_texts_neutral": 0.0,
+      "pct_texts_positive": 0.0177210703526493
+    },
+    "colonsmallsmile": {
+      "symbol": ":p",
+      "count": 4,
+      "texts": 4,
+      "pct_texts_negative": 0.056338028169014086,
+      "pct_texts_neutral": 0.21834061135371177,
+      "pct_texts_positive": 0.0
+    },
+    "colonhihi": {
+      "symbol": "^^",
+      "count": 3,
+      "texts": 3,
+      "pct_texts_negative": 0.0,
+      "pct_texts_neutral": 0.0,
+      "pct_texts_positive": 0.053163211057947905
+    },
+    "colondoublesurprise": {
+      "symbol": ":@",
+      "count": 3,
+      "texts": 3,
+      "pct_texts_negative": 0.03755868544600939,
+      "pct_texts_neutral": 0.21834061135371177,
+      "pct_texts_positive": 0.0
+    },
+    "colonsadcolon": {
+      "symbol": ":'( / :’(",
+      "count": 2,
+      "texts": 2,
+      "pct_texts_negative": 0.03755868544600939,
+      "pct_texts_neutral": 0.0,
+      "pct_texts_positive": 0.0
+    },
+    "coloncolon": {
+      "symbol": ">>",
+      "count": 1,
+      "texts": 1,
+      "pct_texts_negative": 0.018779342723004695,
+      "pct_texts_neutral": 0.0,
+      "pct_texts_positive": 0.0
+    },
+    "colonsurprise": {
+      "symbol": "@@",
+      "count": 1,
+      "texts": 1,
+      "pct_texts_negative": 0.018779342723004695,
+      "pct_texts_neutral": 0.0,
+      "pct_texts_positive": 0.0
+    }
+  },
+  "leakage": {
+    "neu-esc": {
+      "train_val": 0.0,
+      "train_test": 0.0,
+      "val_test": 0.0
+    },
+    "uit-vsfc": {
+      "train_val": 0.0,
+      "train_test": 0.0,
+      "val_test": 0.0
+    }
+  },
+  "label_conflicts": {
+    "neu-esc": {
+      "sentiment": {
+        "conflicting_texts": 0,
+        "train_rows": 0,
+        "pct_train": 0.0
+      },
+      "topic": {
+        "conflicting_texts": 0,
+        "train_rows": 0,
+        "pct_train": 0.0
+      }
+    },
+    "uit-vsfc": {
+      "sentiment": {
+        "conflicting_texts": 1,
+        "train_rows": 2,
+        "pct_train": 0.01750393838613688
+      },
+      "topic": {
+        "conflicting_texts": 0,
+        "train_rows": 0,
+        "pct_train": 0.0
+      }
+    }
+  },
+  "shift": {
+    "splits": [
+      {
+        "comparison": "neu-esc: train vs val",
+        "ks_n_words": 0.014399666341269768,
+        "ks_p": 0.5814468506595256,
+        "oov_tokens_pct": 0.7828024327090986,
+        "jsd_sentiment": 0.001815405674110678,
+        "jsd_topic": 0.0020340852921025736
+      },
+      {
+        "comparison": "neu-esc: train vs test",
+        "ks_n_words": 0.008670850327783586,
+        "ks_p": 0.8311579766627584,
+        "oov_tokens_pct": 0.9280351456265544,
+        "jsd_sentiment": 0.003185668058521263,
+        "jsd_topic": 0.0031488750655823635
+      },
+      {
+        "comparison": "uit-vsfc: train vs val",
+        "ks_n_words": 0.038904023462133064,
+        "ks_p": 0.028980299450343416,
+        "oov_tokens_pct": 0.5267535347934572,
+        "jsd_sentiment": 0.019973287753220596,
+        "jsd_topic": 0.03165721061318311
+      },
+      {
+        "comparison": "uit-vsfc: train vs test",
+        "ks_n_words": 0.021575013885388877,
+        "ks_p": 0.19591664107731588,
+        "oov_tokens_pct": 0.6507784909934922,
+        "jsd_sentiment": 0.028719831635759405,
+        "jsd_topic": 0.013498188878289625
+      },
+      {
+        "comparison": "neu-esc train vs uit-vsfc train",
+        "ks_n_words": 0.11728042749222878,
+        "ks_p": 5.2975192120019204e-92,
+        "oov_tokens_pct": null,
+        "jsd_sentiment": null,
+        "jsd_topic": null
+      }
+    ],
+    "adversarial": {
+      "neu-esc": {
+        "auc": 0.4941349135707318,
+        "top_train_features": [
+          "xong .",
+          "ai .",
+          "tuổi",
+          "trường ơi",
+          "lâu",
+          "điều",
+          "gia .",
+          "tag",
+          "30",
+          "chưa biết"
+        ],
+        "top_test_features": [
+          "gì mà",
+          "luôn á",
+          "em có",
+          "noi",
+          "lễ",
+          "đã thấy",
+          "hơi nhiều",
+          "bài học",
+          "bác ạ",
+          "có ."
+        ]
+      },
+      "uit-vsfc": {
+        "auc": 0.49942488836678084,
+        "top_train_features": [
+          "ôn",
+          "hơn ,",
+          "mình .",
+          "chưa có",
+          "thầy giáo",
+          "có gì",
+          "chỉ bảo",
+          "thầy .",
+          "mái ,",
+          "em thấy"
+        ],
+        "top_test_features": [
+          "đạt của",
+          ".",
+          "viên năng",
+          "ổn",
+          "năng động",
+          "tạm",
+          "và phương",
+          "lớp thực",
+          "lúc hơi",
+          "ghi"
+        ]
+      }
+    }
+  },
+  "recommend": {
+    "loss": {
+      "neu-esc": {
+        "sentiment": "focal",
+        "topic": "focal"
+      },
+      "uit-vsfc": {
+        "sentiment": "focal",
+        "topic": "focal"
+      }
+    },
+    "max_length": {
+      "neu-esc": {
+        "vinai/phobert-base-v2": 80,
+        "xlm-roberta-base": 96,
+        "bert-base-multilingual-cased": 112
+      },
+      "uit-vsfc": {
+        "vinai/phobert-base-v2": 32,
+        "xlm-roberta-base": 48,
+        "bert-base-multilingual-cased": 48
+      }
+    },
+    "batch_plan": [
+      {
+        "dataset": "neu-esc",
+        "tokenizer": "vinai/phobert-base-v2",
+        "max_length": 80,
+        "gpu": "RTX 5050 Laptop 8 GB (local)",
+        "start_batch": 8,
+        "grad_accum": 4,
+        "effective_batch": 32,
+        "precision": "fp16"
+      },
+      {
+        "dataset": "neu-esc",
+        "tokenizer": "vinai/phobert-base-v2",
+        "max_length": 80,
+        "gpu": "T4 16 GB (Kaggle)",
+        "start_batch": 16,
+        "grad_accum": 2,
+        "effective_batch": 32,
+        "precision": "fp16"
+      },
+      {
+        "dataset": "neu-esc",
+        "tokenizer": "xlm-roberta-base",
+        "max_length": 96,
+        "gpu": "RTX 5050 Laptop 8 GB (local)",
+        "start_batch": 8,
+        "grad_accum": 4,
+        "effective_batch": 32,
+        "precision": "fp16"
+      },
+      {
+        "dataset": "neu-esc",
+        "tokenizer": "xlm-roberta-base",
+        "max_length": 96,
+        "gpu": "T4 16 GB (Kaggle)",
+        "start_batch": 16,
+        "grad_accum": 2,
+        "effective_batch": 32,
+        "precision": "fp16"
+      },
+      {
+        "dataset": "neu-esc",
+        "tokenizer": "bert-base-multilingual-cased",
+        "max_length": 112,
+        "gpu": "RTX 5050 Laptop 8 GB (local)",
+        "start_batch": 8,
+        "grad_accum": 4,
+        "effective_batch": 32,
+        "precision": "fp16"
+      },
+      {
+        "dataset": "neu-esc",
+        "tokenizer": "bert-base-multilingual-cased",
+        "max_length": 112,
+        "gpu": "T4 16 GB (Kaggle)",
+        "start_batch": 16,
+        "grad_accum": 2,
+        "effective_batch": 32,
+        "precision": "fp16"
+      },
+      {
+        "dataset": "uit-vsfc",
+        "tokenizer": "vinai/phobert-base-v2",
+        "max_length": 32,
+        "gpu": "RTX 5050 Laptop 8 GB (local)",
+        "start_batch": 16,
+        "grad_accum": 2,
+        "effective_batch": 32,
+        "precision": "fp16"
+      },
+      {
+        "dataset": "uit-vsfc",
+        "tokenizer": "vinai/phobert-base-v2",
+        "max_length": 32,
+        "gpu": "T4 16 GB (Kaggle)",
+        "start_batch": 32,
+        "grad_accum": 1,
+        "effective_batch": 32,
+        "precision": "fp16"
+      },
+      {
+        "dataset": "uit-vsfc",
+        "tokenizer": "xlm-roberta-base",
+        "max_length": 48,
+        "gpu": "RTX 5050 Laptop 8 GB (local)",
+        "start_batch": 16,
+        "grad_accum": 2,
+        "effective_batch": 32,
+        "precision": "fp16"
+      },
+      {
+        "dataset": "uit-vsfc",
+        "tokenizer": "xlm-roberta-base",
+        "max_length": 48,
+        "gpu": "T4 16 GB (Kaggle)",
+        "start_batch": 32,
+        "grad_accum": 1,
+        "effective_batch": 32,
+        "precision": "fp16"
+      },
+      {
+        "dataset": "uit-vsfc",
+        "tokenizer": "bert-base-multilingual-cased",
+        "max_length": 48,
+        "gpu": "RTX 5050 Laptop 8 GB (local)",
+        "start_batch": 16,
+        "grad_accum": 2,
+        "effective_batch": 32,
+        "precision": "fp16"
+      },
+      {
+        "dataset": "uit-vsfc",
+        "tokenizer": "bert-base-multilingual-cased",
+        "max_length": 48,
+        "gpu": "T4 16 GB (Kaggle)",
+        "start_batch": 32,
+        "grad_accum": 1,
+        "effective_batch": 32,
+        "precision": "fp16"
+      }
+    ],
+    "train_dev_idx_file": {
+      "neu-esc": "cache/neu-esc_train_dev_idx.json",
+      "uit-vsfc": "cache/uit-vsfc_train_dev_idx.json"
+    },
+    "test_leaked_idx_file": {
+      "neu-esc": "cache/neu-esc_test_leaked_idx.json",
+      "uit-vsfc": "cache/uit-vsfc_test_leaked_idx.json"
+    }
+  },
+  "warnings": [
+    "neu-esc / vinai/phobert-base-v2: 5.0% of sentiment=positive? train texts are longer than max_length 80",
+    "neu-esc / vinai/phobert-base-v2: 8.0% of sentiment=negative? train texts are longer than max_length 80",
+    "neu-esc / vinai/phobert-base-v2: 14.2% of topic=t1 train texts are longer than max_length 80",
+    "neu-esc / vinai/phobert-base-v2: 5.7% of topic=t2 train texts are longer than max_length 80",
+    "neu-esc / vinai/phobert-base-v2: 5.0% of topic=t4 train texts are longer than max_length 80",
+    "neu-esc / vinai/phobert-base-v2: 17.9% of topic=t5 train texts are longer than max_length 80",
+    "neu-esc / vinai/phobert-base-v2: 8.1% of topic=t6 train texts are longer than max_length 80",
+    "neu-esc / vinai/phobert-base-v2: 21.1% of topic=t7 train texts are longer than max_length 80",
+    "neu-esc / vinai/phobert-base-v2: 6.0% of topic=t8 train texts are longer than max_length 80",
+    "neu-esc / vinai/phobert-base-v2: 22.1% of topic=t9 train texts are longer than max_length 80",
+    "neu-esc / xlm-roberta-base: 5.2% of sentiment=positive? train texts are longer than max_length 96",
+    "neu-esc / xlm-roberta-base: 8.4% of sentiment=negative? train texts are longer than max_length 96",
+    "neu-esc / xlm-roberta-base: 14.0% of topic=t1 train texts are longer than max_length 96",
+    "neu-esc / xlm-roberta-base: 5.9% of topic=t2 train texts are longer than max_length 96",
+    "neu-esc / xlm-roberta-base: 5.6% of topic=t4 train texts are longer than max_length 96",
+    "neu-esc / xlm-roberta-base: 18.4% of topic=t5 train texts are longer than max_length 96",
+    "neu-esc / xlm-roberta-base: 8.4% of topic=t6 train texts are longer than max_length 96",
+    "neu-esc / xlm-roberta-base: 23.3% of topic=t7 train texts are longer than max_length 96",
+    "neu-esc / xlm-roberta-base: 6.0% of topic=t8 train texts are longer than max_length 96",
+    "neu-esc / xlm-roberta-base: 21.9% of topic=t9 train texts are longer than max_length 96",
+    "neu-esc / bert-base-multilingual-cased: 7.2% of sentiment=negative? train texts are longer than max_length 112",
+    "neu-esc / bert-base-multilingual-cased: 12.4% of topic=t1 train texts are longer than max_length 112",
+    "neu-esc / bert-base-multilingual-cased: 15.8% of topic=t5 train texts are longer than max_length 112",
+    "neu-esc / bert-base-multilingual-cased: 7.2% of topic=t6 train texts are longer than max_length 112",
+    "neu-esc / bert-base-multilingual-cased: 19.2% of topic=t7 train texts are longer than max_length 112",
+    "neu-esc / bert-base-multilingual-cased: 5.2% of topic=t8 train texts are longer than max_length 112",
+    "neu-esc / bert-base-multilingual-cased: 19.5% of topic=t9 train texts are longer than max_length 112",
+    "uit-vsfc / vinai/phobert-base-v2: 7.3% of sentiment=negative train texts are longer than max_length 32",
+    "uit-vsfc / vinai/phobert-base-v2: 6.7% of topic=training_program train texts are longer than max_length 32",
+    "uit-vsfc / vinai/phobert-base-v2: 8.0% of topic=facility train texts are longer than max_length 32"
+  ],
+  "tokenizer_status": {
+    "vinai/phobert-base-v2": "reused cache",
+    "xlm-roberta-base": "reused cache",
+    "bert-base-multilingual-cased": "reused cache"
+  }
+}

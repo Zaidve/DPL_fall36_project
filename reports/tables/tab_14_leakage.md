@@ -1,0 +1,8 @@
+| dataset | pair | shared_unique_texts | rows_in_second_split | pct_of_second_split |
+|---|---|---|---|---|
+| neu-esc | train∩val | 0 | 0 | 0 |
+| neu-esc | train∩test | 0 | 0 | 0 |
+| neu-esc | val∩test | 0 | 0 | 0 |
+| uit-vsfc | train∩val | 0 | 0 | 0 |
+| uit-vsfc | train∩test | 0 | 0 | 0 |
+| uit-vsfc | val∩test | 0 | 0 | 0 |
