@@ -387,40 +387,49 @@ def pcgrad_backward(losses, shared_params, extra_loss=None):
       Adds to existing .grad, so gradient accumulation still works.
     """
     tasks = list(losses)
+    n_tasks = len(tasks)
     shared = [p for p in shared_params if p.requires_grad]
 
-    flat_grads = []
+    # One gradient copy per task, kept per parameter (no flattened / stacked copies: with XLM-R's 278M
+    # encoder parameters every full copy is 1.1 GB).
+    task_grads = []
     for t in tasks:
         grads = torch.autograd.grad(losses[t], shared, retain_graph=True, allow_unused=True)
-        flat_grads.append(torch.cat([(torch.zeros_like(p) if g is None else g).flatten()
-                                     for g, p in zip(grads, shared)]))
+        task_grads.append([torch.zeros_like(p) if g is None else g for g, p in zip(grads, shared)])
 
-    projected = []
-    for i, g_i in enumerate(flat_grads):
-        g = g_i.clone()
-        for j in torch.randperm(len(tasks)).tolist():
+    # Every projected gradient is a linear combination of the task gradients, g_i' = sum_k coef[i, k] g_k,
+    # so the projection only needs the T x T matrix of dot products gram[k, j] = g_k . g_j.
+    gram = torch.zeros(n_tasks, n_tasks, dtype=torch.float64)
+    for i in range(n_tasks):
+        for j in range(i, n_tasks):
+            d = sum(torch.dot(a.reshape(-1), b.reshape(-1)).double().cpu()
+                    for a, b in zip(task_grads[i], task_grads[j]))
+            gram[i, j] = gram[j, i] = d
+    coef = torch.eye(n_tasks, dtype=torch.float64)
+    for i in range(n_tasks):
+        c = coef[i].clone()
+        for j in torch.randperm(n_tasks).tolist():
             if j == i:
                 continue
-            g_j = flat_grads[j]
-            dot = torch.dot(g, g_j)
+            dot = c @ gram[:, j]                                  # g_i' . g_j
             if dot < 0:
-                g = g - dot / (g_j.norm() ** 2 + 1e-12) * g_j
-        projected.append(g)
-    # A normal backward gives heads their task gradient and shared params the raw sum
-    # (+ extra_loss); on shared params, swap the raw task sum for the projected one.
-    correction = torch.stack(projected).sum(0) - torch.stack(flat_grads).sum(0)
+                c[j] -= dot / (gram[j, j] + 1e-12)                # g_i' -= (g_i'.g_j / |g_j|^2) g_j
+        coef[i] = c
+    weights = coef.sum(0)                                         # merged = sum_k weights[k] g_k
 
+    # A normal backward gives heads their task gradient and shared params the raw sum (+ extra_loss);
+    # on shared params, add (merged - raw sum) = sum_k (weights[k] - 1) g_k.
     total = sum(losses[t] for t in tasks)
     if extra_loss is not None:
         total = total + extra_loss
     total.backward()
 
-    offset = 0
-    for p in shared:
-        n = p.numel()
-        fix = correction[offset:offset + n].view_as(p)
-        p.grad = fix.clone() if p.grad is None else p.grad + fix
-        offset += n
+    scale = [float(w) - 1.0 for w in weights]
+    if any(abs(s) > 0 for s in scale):
+        for n, p in enumerate(shared):
+            fix = sum(s * task_grads[k][n] for k, s in enumerate(scale) if s != 0)
+            p.grad = fix if p.grad is None else p.grad.add_(fix)
+    del task_grads
 
 
 class DWACombiner(LossCombiner):

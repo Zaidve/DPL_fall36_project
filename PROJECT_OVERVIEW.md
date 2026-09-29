@@ -1,7 +1,9 @@
 # DPL_project: current state
 
 Last updated 2026-09-29. The full pipeline is built and tested: EDA → preprocessing → data loaders →
-models → losses → trainer → experiment configs → Kaggle runner. **No real experiment has been trained yet.**
+models → losses → trainer → experiment configs → Kaggle runner → analysis (status, selection, significance,
+tables, figures, E7). All 3 backbones × all loss strategies were checked on the local GPU with short debug runs.
+**No real experiment has been trained yet.** What to do next: [NEXT_STEPS.md](NEXT_STEPS.md).
 
 - **Project:** multi-task learning (MTL) for Vietnamese educational feedback, two tasks per text:
   **sentiment** and **topic** (`classification` in the raw data and in `utils/dataloader.py`).
@@ -149,6 +151,9 @@ PCGrad and GradNorm.
 
 - Task losses: `ce`, `weighted_ce`, `focal`, label smoothing.
 - Combiners: `sum`, `fixed`, `uncertainty`, `gradnorm`, `pcgrad`, `dwa`.
+- `pcgrad_backward` is memory-lean: it keeps one gradient copy per task and projects through the T×T matrix of
+  dot products (every projected gradient is a combination of the task gradients), so XLM-R + PCGrad needs 8.4 GB
+  instead of running out of memory (~12 GB). Same results as the direct version (max difference 4e-6).
 - SMART: `mode="embeddings"` (ours, real adversarial step) and `mode="token_ids"` (exact reproduction of the
   reference code, checked against it: 1.09292293 both), MLM masking and loss.
 
@@ -254,9 +259,22 @@ Outputs on Kaggle: `/kaggle/working/models`, `/kaggle/working/reports`. Environm
 **Local GPU:** NVIDIA GeForce RTX 5050 Laptop GPU (8 GB), driver 576.76 (CUDA ≤ 12.9).
 PyTorch `2.11.0+cu128` is the newest build for this driver (2.14 needs CUDA 13 / driver ≥ 580).
 
-**Measured (ViSoBERT, fp16, 96 tokens):** batch 32 uses 2.5 GB, batch 32 + SMART 3.7 GB, so batch 32 without
-gradient accumulation fits even locally. A full UIT-VSFC epoch takes ~40 s locally; PCGrad is ~2.5× slower.
-PhoBERT and XLM-R have not been measured yet.
+**Measured peak GPU memory** (batch 32, real `max_len`, local RTX 5050, 20-step debug runs, 2026-09-29):
+
+| Backbone | Dataset | sum (fp16) | SMART (fp16) | GradNorm (fp32) | PCGrad (fp32) |
+|---|---|---|---|---|---|
+| ViSoBERT (97M) | UIT-VSFC | 2.5 GB | 3.7 GB (96 tokens) | – | – |
+| PhoBERT (134M) | UIT-VSFC | 2.6 GB | 2.6 GB | 2.6 GB | – |
+| PhoBERT | NEU-ESC | 2.7 GB | 3.7 GB | 3.1 GB | 4.1 GB |
+| XLM-R (277M) | UIT-VSFC | 5.2 GB | 5.2 GB | 5.2 GB | 8.4 GB |
+| XLM-R | NEU-ESC | 5.2 GB | 5.7 GB | 5.2 GB | 8.4 GB |
+
+Everything fits a 16 GB Kaggle T4 with batch 32 and no gradient accumulation. XLM-R + PCGrad only just runs on the
+8 GB laptop (Windows spills into shared memory): run it on Kaggle. A full UIT-VSFC epoch with ViSoBERT takes
+~40 s locally; PCGrad / GradNorm are ~1.5–2.5× slower.
+
+**Hugging Face cache** (`~/.cache/huggingface/hub`): ViSoBERT, PhoBERT (1.1 GB) and XLM-R (1.1 GB) are
+downloaded locally.
 
 **Packages (`.venv`, Python 3.11.0):** torch 2.11.0+cu128, transformers 5.17.0, tokenizers 0.23.2,
 huggingface_hub 1.33.0, sentencepiece 0.2.2, underthesea 9.5.0, pandas 3.0.6, numpy 2.4.6, pyarrow 25.0.1,
@@ -286,7 +304,7 @@ Run one: `.venv/Scripts/python.exe tests/test_train.py` (CPU only, no downloads,
 ## 7. Open items
 
 1. **Run the matrix.** All code from the specs is built (matrix plan steps 1–5 done). Nothing has been trained
-   for real yet: start with E1 on Kaggle (`status` shows the session plan).
+   for real yet: start with E1 on Kaggle (`status` shows the session plan). Step-by-step: [NEXT_STEPS.md](NEXT_STEPS.md).
 2. **`selection.json`:** after E1 finishes, run `python -m trainer.analysis select --stage backbone`
    (then `loss` after E2, `imbalance` after E3) and commit the file, so Kaggle sessions pick it up.
 3. **E7** needs the kept checkpoints of E1 and E4 in one `models/` (they stay in `/kaggle/working/models`
@@ -294,7 +312,7 @@ Run one: `.venv/Scripts/python.exe tests/test_train.py` (CPU only, no downloads,
 4. **Analysis:** `python -m trainer.analysis all` at any time; it fills in as runs finish.
 5. **VnCoreNLP** for PhoBERT's `text_seg` (the spec's preferred segmenter): try on Kaggle with
    `RUN_PREPROCESS = True`, `INSTALL_VNCORENLP = True` if Java is available.
-6. **PhoBERT and XLM-R** have only been checked through tests with tiny models; the first Kaggle quick check
-   (`MAX_STEPS = 20`) will run them for real.
+6. **Kaggle library versions:** everything was checked locally (torch 2.11, transformers 5.17); Kaggle has its
+   own versions. The first Kaggle quick check (`MAX_STEPS = 20`) covers that.
 7. **Decisions taken by default** (change in `configs/default.yaml` if needed): GradNorm lr 0.025 (spec: 1e-4),
    batch 32 without accumulation, no `legacy` tag (legacy flags exist in `architecture/legacy.py`).
