@@ -1,0 +1,6 @@
+key: phobert
+pretrained: vinai/phobert-base-v2
+text_column: text_seg          # PhoBERT was pretrained on word-segmented text (sinh_viên)
+word_segmentation: true
+tokenizer: auto                # AutoTokenizer (PhobertTokenizer, BPE on vocab.txt + bpe.codes); checked correct
+max_positions: 256             # 258 position embeddings minus 2

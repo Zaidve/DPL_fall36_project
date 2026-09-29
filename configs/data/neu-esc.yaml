@@ -1,0 +1,11 @@
+name: neu-esc
+processed_file: neu-esc.parquet
+subsets_file: neu-esc_subsets.json
+# max_len per backbone = min(model limit, ceil(p95 of train token length / 16) * 16), counted with special
+# tokens and no truncation (notebooks/01_eda.ipynb, reports/eda_summary.json -> recommend.max_length).
+# visobert: measured with the original sentencepiece model (the EDA used a different tokenizer set).
+# About 4-5% of train texts are longer; long-text topics lose more (t5, t7, t9: ~18-23%, see tab_08).
+max_len:
+  phobert: 80
+  xlmr: 96
+  visobert: 96

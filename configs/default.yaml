@@ -16,3 +16,60 @@ preprocess:
   label_names_confirmed:
     neu-esc: false
     uit-vsfc: true
+
+# ---------------------------------------------------------------------------
+# Training (models_spec.md, losses_spec.md, train_spec.md).
+# An experiment YAML (configs/experiment/*.yaml) starts with `extends: configs/default.yaml`
+# and overrides only what it needs; tags (sum, unc, focal, ...) are applied on top by the trainer.
+# ---------------------------------------------------------------------------
+
+data:
+  datasets: [neu-esc, uit-vsfc]
+  tasks: [sentiment, topic]
+  train_fraction: 1.0          # < 1 -> ids from data/processed/<dataset>_subsets.json
+
+model:
+  backbone: phobert            # key of configs/model/<key>.yaml
+  head: linear                 # linear | mlp | task_aware
+  dropout: 0.1
+  pooling: cls                 # cls | mean
+  cross: both                  # task_aware only: both | sent_from_topic | topic_from_sent
+  aux_weight: 0.5              # task_aware only: weight of the stage-1 loss
+  mlm: false
+  gradient_checkpointing: false
+
+loss:
+  task_loss: ce                # ce | weighted_ce | focal
+  focal_gamma: 2.0
+  label_smoothing: 0.0
+  strategy: sum                # sum | fixed | uncertainty | gradnorm | pcgrad | dwa
+  fixed_alpha: 0.5
+  gradnorm_alpha: 1.5
+  gradnorm_lr: 0.025           # OPEN DECISION: train_spec uses lr_heads (1e-4); 0.025 is the GradNorm paper value
+  dwa_temperature: 2.0
+  smart: false
+  smart_mode: embeddings       # embeddings (ours) | token_ids (reference reproduction, tag smartref)
+  smart_weight: 0.02
+  smart_eps: 1.0e-5
+  smart_step_size: 1.0e-3
+  smart_steps: 1
+  mlm: false
+  mlm_prob: 0.15
+  mlm_weight: 1.0
+
+train:
+  epochs: 10
+  batch_size: 32               # effective batch = batch_size * grad_accum_steps
+  grad_accum_steps: 1          # OPEN DECISION: EDA batch plan suggests 16 x 2 (T4) / 8 x 4 (8 GB) for NEU-ESC
+  lr_encoder: 2.0e-5
+  lr_heads: 1.0e-4             # heads, label embeddings, gates, learned loss weights
+  weight_decay: 0.01           # not applied to bias / LayerNorm weights
+  warmup_ratio: 0.1
+  scheduler: linear
+  max_grad_norm: 1.0
+  fp16: true                   # forced off for pcgrad / gradnorm; never bf16 (Kaggle T4)
+  patience: 3
+  select_metric: macro_f1_mean
+  num_workers: 2
+  keep_checkpoint: false
+  log_every: 50

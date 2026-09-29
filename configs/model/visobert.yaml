@@ -1,0 +1,10 @@
+key: visobert
+pretrained: uitnlp/visobert
+text_column: text_clean
+word_segmentation: false
+# The repo ships only sentencepiece.bpe.model (a BPE model, no tokenizer config). transformers 5.17
+# converts it as if it were XLM-R's Unigram model, so AutoTokenizer splits words wrongly
+# (thầy -> ▁th ầy; 5/3,000 texts match the original, texts ~1.7x longer). Use the original
+# sentencepiece model with fairseq-style ids instead (needs `pip install sentencepiece`).
+tokenizer: sentencepiece_fairseq
+max_positions: 512

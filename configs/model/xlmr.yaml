@@ -1,0 +1,6 @@
+key: xlmr
+pretrained: FacebookAI/xlm-roberta-base
+text_column: text_clean
+word_segmentation: false
+tokenizer: auto                # AutoTokenizer; matches the original sentencepiece (Unigram) on 3,000/3,000 texts
+max_positions: 512

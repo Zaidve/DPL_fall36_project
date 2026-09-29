@@ -1,0 +1,8 @@
+name: uit-vsfc
+processed_file: uit-vsfc.parquet
+subsets_file: uit-vsfc_subsets.json
+# Same rule as neu-esc.yaml (p95 of train token length rounded up to 16).
+max_len:
+  phobert: 32
+  xlmr: 48
+  visobert: 48
