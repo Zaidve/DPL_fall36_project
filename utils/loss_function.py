@@ -8,7 +8,7 @@
     Sections
       A. Task losses          : ce, weighted_ce, focal (+ label smoothing)
       B. MLM auxiliary loss   : mask_tokens, mlm_loss
-      C. SMART regularizer    : smart_regularizer
+      C. SMART regularizer    : smart_regularizer (mode embeddings | token_ids), legacy_token_shift
       D. Combining task losses: sum, fixed, uncertainty, gradnorm, pcgrad, dwa
 
     Compared with `multi-task-bert/utils/loss_function.py` (reference code of the NEU-ESC paper):
@@ -22,6 +22,8 @@
         for each head and threw away the other outputs).
       - MLM masking excludes special tokens / padding, samples without duplicates
         and draws random tokens from the real vocabulary size of any backbone.
+      - The reference behaviour is still available as smart_regularizer(mode="token_ids")
+        (tag smartref), only to reproduce prior results for comparison.
 
     Total loss in the trainer:
         L = combiner(task_losses) + smart_weight * R_smart + mlm_weight * L_mlm
@@ -181,18 +183,55 @@ def _input_embeddings(model):
     return encoder.get_input_embeddings()
 
 
+SMART_MODES = ("embeddings", "token_ids")
+
+
+def legacy_token_shift(input_ids, eps=1e-5, steps=1, norm_eps=1e-6, generator=None):
+    """
+      The reference code's perturbation (multi-task-bert-master/utils/loss_function.py, SMARTLoss):
+      Gaussian noise (std eps) is added to the token ids, the gradient step never happens (the noise
+      gradient is None because `.long()` cuts the graph), so each step only rescales the noise to
+      unit inf-norm per row; then `(ids + noise).long()` truncates toward zero. Every token whose
+      noise is negative becomes id - 1 (about half of all tokens, special tokens included; id 0 stays 0).
+    """
+    noise = torch.randn(input_ids.shape, generator=generator, device=input_ids.device) * eps
+    for _ in range(steps):
+        noise = noise / (inf_norm(noise) + norm_eps)
+    return (input_ids + noise).long()
+
+
 def smart_regularizer(model, input_ids, attention_mask, clean_logits,
-                      eps=1e-5, step_size=1e-3, steps=1, norm_eps=1e-6) -> torch.Tensor:
+                      eps=1e-5, step_size=1e-3, steps=1, norm_eps=1e-6, mode="embeddings") -> torch.Tensor:
     """
       Smoothness-inducing adversarial regularizer, one call for all task heads.
+
+      mode="embeddings" (ours, Jiang et al. 2020):
         1. perturb the input embeddings with small noise (padding / special positions masked)
         2. `steps` gradient-ascent steps on the noise to maximise KL(adv || clean)
         3. return sum_t symmetric_KL(adv_logits[t], clean_logits[t])   (batchmean)
+
+      mode="token_ids" (reproduction of the reference code, tag smartref; not a recommended method):
+        per task, an independent legacy_token_shift of the ids, one forward pass on the corrupted ids,
+        and symmetric KL with reduction="sum" as in the reference. It is a random token-substitution
+        consistency term, not SMART. The reference also ran `steps` extra forward passes whose output
+        was discarded (their gradient was None); they are skipped here, which leaves the result unchanged.
+
       Gradients of the returned value flow to the model parameters.
     """
+    if mode not in SMART_MODES:
+        raise ValueError(f"unknown SMART mode {mode!r}; choose from {SMART_MODES}")
+    tasks = list(clean_logits)
+
+    if mode == "token_ids":
+        total = 0.0
+        for t in tasks:
+            shifted = legacy_token_shift(input_ids, eps, steps, norm_eps)
+            adv_logits = model(input_ids=shifted, attention_mask=attention_mask)
+            total = total + sym_kl_loss(adv_logits[t], clean_logits[t], reduction="sum")
+        return total
+
     embeds = _input_embeddings(model)(input_ids)
     mask = attention_mask.unsqueeze(-1).to(embeds.dtype)
-    tasks = list(clean_logits)
 
     noise = (torch.randn_like(embeds) * eps * mask).requires_grad_()
     for _ in range(steps):

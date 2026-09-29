@@ -12,7 +12,8 @@ import torch.nn.functional as F
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.loss_function import (COMBINERS, TaskLoss, build_combiner, class_weights_from_labels,  # noqa: E402
-                                 focal_loss, mask_tokens, mlm_loss, pcgrad_backward, smart_regularizer)
+                                 focal_loss, legacy_token_shift, mask_tokens, mlm_loss, pcgrad_backward,
+                                 smart_regularizer, sym_kl_loss)
 
 TASKS = ["sentiment", "topic"]
 NUM_CLASSES = {"sentiment": 3, "topic": 4}
@@ -228,6 +229,62 @@ def test_smart_regularizer():
     reg.backward()
     assert model.encoder.layer.weight.grad is not None and model.encoder.layer.weight.grad.abs().sum() > 0
     assert model.heads["sentiment"].weight.grad.abs().sum() > 0
+
+
+def test_smart_embeddings_takes_a_real_gradient_step():
+    """ Default mode: the gradient w.r.t. the noise exists (the reference code's was always None). """
+    grads, real_grad = [], torch.autograd.grad
+
+    def spy(*args, **kwargs):
+        out = real_grad(*args, **kwargs)
+        grads.extend(out)
+        return out
+
+    torch.autograd.grad = spy
+    try:
+        model = ToyModel()
+        input_ids, attention_mask, _ = toy_batch()
+        smart_regularizer(model, input_ids, attention_mask, model(input_ids=input_ids, attention_mask=attention_mask))
+    finally:
+        torch.autograd.grad = real_grad
+    assert grads and all(g is not None and g.abs().sum() > 0 for g in grads)
+
+
+def test_legacy_token_shift():
+    ids = torch.randint(3, 64000, (100, 100), generator=torch.Generator().manual_seed(0))
+    shifted = legacy_token_shift(ids, generator=torch.Generator().manual_seed(1))
+    diff = shifted - ids
+    assert set(diff.unique().tolist()) <= {-1, 0}                     # only id -> id - 1
+    assert abs((diff == -1).float().mean().item() - 0.5) < 0.03        # about half of all tokens
+    again = legacy_token_shift(ids, generator=torch.Generator().manual_seed(1))
+    assert torch.equal(shifted, again)
+    specials = legacy_token_shift(torch.tensor([[0, 1, 2] * 500]), generator=torch.Generator().manual_seed(2))
+    assert set(specials[0, 0::3].tolist()) == {0}                      # <s>=0 cannot go below 0
+    assert set(specials[0, 1::3].tolist()) == {0, 1}                   # <pad> -> <s> (legacy quirk)
+    assert set(specials[0, 2::3].tolist()) == {1, 2}                   # </s> -> <pad> (legacy quirk)
+
+
+def test_smart_token_ids_mode():
+    """ Reference reproduction (tag smartref): per task, own token shift, symmetric KL with reduction sum. """
+    torch.manual_seed(0)
+    model = ToyModel()
+    input_ids, attention_mask, _ = toy_batch()
+    clean = model(input_ids=input_ids, attention_mask=attention_mask)
+    torch.manual_seed(7)
+    reg = smart_regularizer(model, input_ids, attention_mask, clean, mode="token_ids")
+    torch.manual_seed(7)
+    expected = 0.0
+    for task in TASKS:
+        adv = model(input_ids=legacy_token_shift(input_ids), attention_mask=attention_mask)
+        expected = expected + sym_kl_loss(adv[task], clean[task], reduction="sum")
+    assert torch.allclose(reg, expected) and torch.isfinite(reg) and reg.item() >= 0
+    reg.backward()
+    assert model.encoder.layer.weight.grad.abs().sum() > 0 and model.encoder.embed.weight.grad.abs().sum() > 0
+    try:
+        smart_regularizer(model, input_ids, attention_mask, clean, mode="tokens")
+        raise AssertionError("unknown mode not rejected")
+    except ValueError:
+        pass
 
 
 if __name__ == "__main__":
