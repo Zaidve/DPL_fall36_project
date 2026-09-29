@@ -41,6 +41,7 @@ model:
 loss:
   task_loss: ce                # ce | weighted_ce | focal
   focal_gamma: 2.0
+  focal_alpha: false           # true = focal loss with per-class alpha = class weights from train
   label_smoothing: 0.0
   strategy: sum                # sum | fixed | uncertainty | gradnorm | pcgrad | dwa
   fixed_alpha: 0.5
@@ -73,3 +74,4 @@ train:
   num_workers: 2
   keep_checkpoint: false
   log_every: 50
+  device: auto                 # auto (cuda if available) | cuda | cpu; env DPL_DEVICE overrides
