@@ -200,16 +200,47 @@ def test_mtl_sum_keeps_fp16_checkpoint():
 
 
 def test_checkpoint_rule_and_evaluate_only():
-    assert T.needs_checkpoint('mtl', 'sum')
+    assert T.needs_checkpoint('mtl', 'sum') and T.needs_checkpoint('st_sentiment', 'sum')     # E7 sources
     assert T.needs_checkpoint('mtlaware', 'bestloss-bestimb') and T.needs_checkpoint('mtlaware', 'final')
     for mode, tag in (('mtl', 'sum-frac0.1'), ('mtlaware', 'final-frac0.5'), ('mtlaware', 'final-mlm'),
-                      ('mtlaware', 'sum'), ('st_topic', 'sum'), ('mtl', 'unc')):
+                      ('mtlaware', 'sum'), ('st_topic', 'sum'), ('mtl', 'unc'), ('st_sentiment', 'sum-frac0.1'),
+                      ('st_sentiment', 'focal')):
         assert not T.needs_checkpoint(mode, tag), (mode, tag)
     try:
         T.load_experiment('configs/experiment/e7_cross_dataset.yaml')
         raise AssertionError('evaluation-only experiment not refused')
     except ValueError as e:
         assert 'evaluation-only' in str(e)
+
+
+def test_placeholder_expansion():
+    """ Without selection.json (or with only some stages) the matrix keeps placeholders; they cannot be trained. """
+    with sandbox() as tmp:
+        e4 = T.load_experiment('configs/experiment/e4_task_aware.yaml')
+        try:
+            T.expand_runs(e4)
+            raise AssertionError('missing selection.json not reported')
+        except FileNotFoundError:
+            pass
+        specs = T.expand_runs(e4, placeholders=True)
+        assert len(specs) == 12
+        ids = {s.run_id for s in specs}
+        assert 'neu-esc__best__mtlaware__seed42__bestloss-bestimb' in ids and 'uit-vsfc__best__mtlaware__seed42__sum' in ids
+        assert all(s.cfg['run']['placeholder'] for s in specs)                # backbone still `best`
+        try:
+            T.train_one_run(specs[0])
+            raise AssertionError('placeholder run was trained')
+        except ValueError as e:
+            assert 'placeholder' in str(e)
+        # backbone stage written, loss stage not yet
+        save_json({ds: {'backbone': 'xlmr'} for ds in ('neu-esc', 'uit-vsfc')},
+                  Path(tmp) / 'reports' / 'tables' / 'selection.json')
+        e3 = T.expand_runs(T.load_experiment('configs/experiment/e3_imbalance.yaml'), placeholders=True)
+        by_id = {s.run_id: s for s in e3}
+        partial = by_id['neu-esc__xlmr__mtl__seed42__bestloss-focal']
+        assert partial.cfg['run']['placeholder'] and partial.cfg['loss']['task_loss'] == 'focal'
+        ready = by_id['neu-esc__xlmr__st_sentiment__seed42__focal']
+        assert not ready.cfg['run']['placeholder'] and ready.cfg['model']['backbone'] == 'xlmr'
 
 
 def test_shipped_experiment_configs_expand():

@@ -12,9 +12,9 @@ preprocess:
   drop_test_overlap: false     # true = drop train rows whose text is in test
   subset_fractions: [0.1, 0.25, 0.5]
   seed: 42
-  # NEU-ESC names are not confirmed yet: unconfirmed sentiment names get a '?' suffix, topics become t0..t9
+  # Unconfirmed names would get a '?' suffix (topics t0..t9). NEU-ESC names confirmed from the dataset card.
   label_names_confirmed:
-    neu-esc: false
+    neu-esc: true
     uit-vsfc: true
 
 # ---------------------------------------------------------------------------

@@ -55,7 +55,7 @@ DEFAULT_CFG = {
     'drop_test_overlap': False,
     'subset_fractions': [0.1, 0.25, 0.5],
     'seed': 42,
-    'label_names_confirmed': {'neu-esc': False, 'uit-vsfc': True},
+    'label_names_confirmed': {'neu-esc': True, 'uit-vsfc': True},
 }
 
 # Placeholders are single alphanumeric words so they survive segmentation and tokenization.

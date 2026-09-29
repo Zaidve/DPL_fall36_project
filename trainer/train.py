@@ -159,13 +159,17 @@ def _needs_selection(exp):
     return 'best' in exp['backbones'] or bool(tokens & set(SELECTION_TOKENS))
 
 
-def resolve_tag(tag, selection_ds):
-    """ Replace bestloss / bestimb / final with the tags chosen for this dataset. """
+def resolve_tag(tag, selection_ds, keep_missing=False):
+    """ Replace bestloss / bestimb / final with the tags chosen for this dataset.
+        keep_missing=True leaves a token as a placeholder when its selection stage is not written yet. """
     out = []
     for token in tag.split('-'):
         if token in SELECTION_TOKENS:
             value = (selection_ds or {}).get(SELECTION_TOKENS[token])
             if not value:
+                if keep_missing:
+                    out.append(token)
+                    continue
                 raise KeyError(f'selection.json has no {SELECTION_TOKENS[token]!r} for this dataset')
             out += [t for t in value.split('-') if t not in out]
         elif token not in out:
@@ -174,26 +178,45 @@ def resolve_tag(tag, selection_ds):
 
 
 def needs_checkpoint(mode, raw_tag):
-    """ Runs E7 (cross-dataset) evaluates keep best.pt: E1 mtl/sum and the final model
-        (mtlaware with the selected loss / imbalance tags, no frac / mlm variants). """
+    """ Runs E7 (cross-dataset) evaluates keep best.pt: E1 st_sentiment/sum (single-task baseline),
+        E1 mtl/sum, and the final model (mtlaware with the selected loss / imbalance tags, no frac / mlm). """
     tokens = set(raw_tag.split('-'))
-    return (mode == 'mtl' and raw_tag == 'sum') or (
+    return (mode in ('mtl', 'st_sentiment') and raw_tag == 'sum') or (
         mode == 'mtlaware' and bool(tokens) and tokens <= {'final', 'bestloss', 'bestimb'})
 
 
-def expand_runs(exp):
-    """ RunSpec for every datasets x backbones x grid x seeds combination, with tags applied. """
-    selection = load_selection() if _needs_selection(exp) else {}
+def expand_runs(exp, placeholders=False):
+    """
+      RunSpec for every datasets x backbones x grid x seeds combination, with tags applied.
+      placeholders=True (for planning, e.g. the run matrix): when selection.json or one of its stages is
+      missing, keep `best` / `bestloss` / `bestimb` / `final` in the run id instead of failing; such specs
+      have cfg['run']['placeholder'] = True and must not be trained.
+    """
+    selection = {}
+    if _needs_selection(exp):
+        try:
+            selection = load_selection()
+        except FileNotFoundError:
+            if not placeholders:
+                raise
     base = {k: v for k, v in exp.items() if k not in ('datasets', 'backbones', 'seeds', 'grid')}
     specs, seen = [], set()
     for ds in exp['datasets']:
         for bb in exp['backbones']:
-            backbone = selection[ds]['backbone'] if bb == 'best' else bb
+            backbone = bb
+            if bb == 'best':
+                chosen = selection.get(ds, {}).get('backbone')
+                if chosen is None and not placeholders:
+                    raise KeyError(f'selection.json has no backbone for {ds}')
+                backbone = chosen or 'best'
             for entry in exp['grid']:
                 mode, raw_tag = entry['mode'], str(entry['tag'])
-                tag = resolve_tag(raw_tag, selection.get(ds))
+                tag = resolve_tag(raw_tag, selection.get(ds), keep_missing=placeholders)
+                concrete = '-'.join(t for t in tag.split('-') if t not in SELECTION_TOKENS)
+                placeholder = backbone == 'best' or concrete != tag
                 for seed in exp['seeds']:
-                    cfg = apply_tag_overrides(base, mode, tag)
+                    cfg = (apply_tag_overrides(base, mode, concrete) if concrete
+                           else apply_tag_overrides(base, mode, 'sum'))
                     keep = cfg['train'].get('keep_checkpoint', False) or needs_checkpoint(mode, raw_tag)
                     cfg = apply_overrides(cfg, {'model.backbone': backbone, 'data.dataset': ds, 'train.seed': int(seed),
                                                 'train.keep_checkpoint': keep, **entry.get('overrides', {})})
@@ -202,7 +225,8 @@ def expand_runs(exp):
                         raise ValueError(f'duplicate run id {run_id}')
                     seen.add(run_id)
                     cfg['run'] = {'run_id': run_id, 'experiment': exp.get('experiment'), 'dataset': ds,
-                                  'backbone': backbone, 'mode': mode, 'tag': tag, 'seed': int(seed)}
+                                  'backbone': backbone, 'mode': mode, 'tag': tag, 'seed': int(seed),
+                                  'placeholder': placeholder}
                     specs.append(RunSpec(run_id, ds, backbone, mode, tag, int(seed), cfg))
     return specs
 
@@ -253,6 +277,9 @@ def _lr(optimizer, name):
 def train_one_run(spec, max_steps=None, root=None):
     """ Train, select, evaluate and save one run. Returns the metrics dict (also saved as metrics.json). """
     cfg, tasks = spec.cfg, list(spec.cfg['data']['tasks'])
+    if cfg.get('run', {}).get('placeholder'):
+        raise ValueError(f'{spec.run_id} still has selection placeholders (best / bestloss / bestimb / final); '
+                         'write the matching selection.json stage first')
     tc, lc = cfg['train'], cfg['loss']
     run_path = run_dir(spec.run_id, root)
     for stale in ('error.txt', 'metrics.json'):

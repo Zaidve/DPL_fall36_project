@@ -20,11 +20,12 @@ UIT_VSFC_LABELS = {
     'classification': ['lecturer', 'training_program', 'facility', 'others'],
 }
 
-# NEU-ESC ships without a label description. These names were inferred by
-# reading samples, so check them against the source paper before reporting.
+# NEU-ESC names from the dataset card (hung20gg/NEU-ESC on Hugging Face); the train class
+# counts match the card (sentiment 15,936 / 2,897 / 3,630 / 585).
 NEU_ESC_LABELS = {
     'sentiment': ['neutral', 'positive', 'negative', 'toxic'],
-    'classification': [str(i) for i in range(10)],
+    'classification': ['spam', 'news', 'academic', 'other', 'service', 'jobs_recruitment',
+                       'personal_affairs', 'social_affairs', 'help_share', 'club_events'],
 }
 
 
