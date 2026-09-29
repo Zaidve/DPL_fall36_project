@@ -50,14 +50,15 @@ DPL_project/
 │   ├── significance.py      McNemar per seed, paired bootstrap, standard comparison pairs
 │   ├── tables.py            main results table + RQ1–RQ5, cost, MLM ablation (CSV + Markdown)
 │   ├── figures.py           learning curves, low resource, per class, confusion, task weights, RQ4 vs V
+│   ├── cross_eval.py        E7: kept checkpoints on the other dataset, 3 shared sentiment labels
 │   └── analysis.py          python -m trainer.analysis matrix | status | merge | check | select |
-│                            significance | tables | figures | all
+│                            significance | tables | figures | cross-eval | all
 ├── notebooks/
 │   ├── 01_eda.ipynb         EDA (outputs in reports/)
 │   └── kaggle_runner.ipynb  runs one experiment on Kaggle (also runs locally)
 ├── reports/                 eda_summary.json, eda_findings.md, figures/, tables/ (EDA + preprocessing)
 ├── models/                  run outputs, one folder per run (gitignored; created by training)
-├── tests/                   9 test files, 114 tests (+ fixtures: legacy model, fake run folders / full fake matrix)
+├── tests/                   9 test files, 116 tests (+ fixtures: legacy model, fake run folders / full fake matrix)
 ├── .venv/                   Python 3.11.0 (not in git)
 └── PROJECT_OVERVIEW.md      this file
 ```
@@ -197,18 +198,20 @@ python -m trainer.train --experiment configs/experiment/e1_baseline.yaml [--only
 | `check [--models DIR ...]` | config drift between seeds, library versions, best epoch 1, skipped steps, prediction counts, missing kept checkpoints |
 | `select --stage backbone\|loss\|imbalance [--allow-partial] [--force]` | writes one stage of `reports/tables/selection.json` (below) |
 | `select --explain` | current choices with their validation scores, seed counts and date |
-
 | `significance [--n-boot N]` | standard pairs (RQ1 ST vs MTL per backbone; RQ2 strategies vs sum, smartref vs smartemb; RQ3 imbalance; RQ4 linear vs task-aware; final vs best single task): McNemar per seed + paired bootstrap of Δ macro-F1 → `significance.csv` |
 | `tables` | `results_<dataset>` (prior work for NEU-ESC / our reproduction / ours, final model in bold), `rq1_st_vs_mtl`, `rq2_loss`, `rq3_imbalance` + `rq3_per_class`, `rq4_task_aware` (with Cramér's V), `rq5_low_resource`, `cost`, `e6_mlm` |
 | `figures` | `rq5_curves_*`, `rq5_low_resource_*`, `rq3_per_class_*`, `confusion_*_{sentiment,topic}`, `rq2_weights_*`, `rq4_gain_vs_v` |
-| `all` | significance + tables + figures |
+| `cross-eval [--device D] [--force]` | E7: every run with `best.pt` and a sentiment head predicts the other dataset's test split on 3 shared labels (by name; toxic → negative), with the target's text column and `max_len`; in-domain 3-class score from its own predictions → `e7_cross_dataset` (train × test, mean ± std) + `e7_cross_dataset_runs`; cached per run in `cross_eval.json` |
+| `all` | significance + tables + figures (+ cross-eval when checkpoints exist) |
 
 Table cells: test percent `mean ± std` over seeds; `(n=2)` if a seed is missing; `†` = McNemar p < 0.05 on every
 seed in one direction vs the row's baseline (the single-task run for main-table rows); `*` = best in the column.
 Everything works on a partial matrix and prints what it skipped (on the full fake matrix: ~20 s).
 
 Before any run finishes, `status` estimates E1 at ~30 GPU-hours (4 sessions). While Must runs wait for the loss
-stage, the session plan puts E2 first. Only `cross-eval` (E7, matrix plan step 5) is not built yet.
+stage, the session plan puts E2 first. In the Kaggle runner, `EXPERIMENT = 'e7_cross_dataset'` runs `cross-eval`.
+Real check (ViSoBERT `mtl/sum` smoke run on UIT-VSFC, 2 short epochs): 3-class macro-F1 73.9% in-domain vs
+36.4% on NEU-ESC (it labels most NEU forum posts negative; NEU-ESC is 69% neutral).
 
 **Selection workflow** (`trainer/selection.py`): always on the mean over seeds of the **validation**
 `macro_f1_mean` (asserted: test scores are never read).
@@ -274,7 +277,7 @@ Not installed: seaborn, tabulate, pytest (tests run with plain `python tests/<fi
 | `test_common_config.py` | 12 | paths, seeds, config `extends`, overrides |
 | `test_evaluate_runs.py` | 10 | metrics (argument order), predictions, run ids, resume, checkpoints |
 | `test_train.py` | 14 | the full trainer on CPU: every strategy, resume, early stop, errors, placeholders, shipped configs |
-| `test_analysis.py` | 20 | run matrix, status, merge, results + seeds, session plan, consistency, selection stages (validation only, seeds, order, force, ties), McNemar / bootstrap, tables + Markdown, every figure, CLI |
+| `test_analysis.py` | 22 | run matrix, status, merge, results + seeds, session plan, consistency, selection stages (validation only, seeds, order, force, ties), McNemar / bootstrap, tables + Markdown, every figure, E7 (3-label mapping, cross-eval + cache), CLI |
 
 Run one: `.venv/Scripts/python.exe tests/test_train.py` (CPU only, no downloads, ~20 s).
 
@@ -282,16 +285,13 @@ Run one: `.venv/Scripts/python.exe tests/test_train.py` (CPU only, no downloads,
 
 ## 7. Open items
 
-1. **Matrix tooling** (`experiment_matrix_spec.md`): `trainer/status.py`, `results.py`, `selection.py`,
-   `significance.py`, `tables.py`, `figures.py`, `cross_eval.py`, `analysis.py` + `tests/test_analysis.py`.
-   Done: step 1 (NEU names, E7 checkpoints, placeholder expansion), step 2 (`status.py`, `results.py`,
-   `analysis.py` with matrix / status / merge / check, status cell in the Kaggle runner) and step 3
-   (`selection.py`, `select` command) and step 4 (`significance.py`, `tables.py`, `figures.py`, `all`;
-   `tables` cell at the end of the Kaggle runner). Next: step 5 `cross_eval.py` (E7).
+1. **Run the matrix.** All code from the specs is built (matrix plan steps 1–5 done). Nothing has been trained
+   for real yet: start with E1 on Kaggle (`status` shows the session plan).
 2. **`selection.json`:** after E1 finishes, run `python -m trainer.analysis select --stage backbone`
    (then `loss` after E2, `imbalance` after E3) and commit the file, so Kaggle sessions pick it up.
-3. **E7 evaluation** (`trainer/cross_eval.py`, to build): 3 sentiment labels mapped by name (toxic → negative).
-4. **Analysis:** built (`python -m trainer.analysis all`); it fills in as runs finish.
+3. **E7** needs the kept checkpoints of E1 and E4 in one `models/` (they stay in `/kaggle/working/models`
+   across sessions only via Save Version + `RESUME_FROM`, or `merge`).
+4. **Analysis:** `python -m trainer.analysis all` at any time; it fills in as runs finish.
 5. **VnCoreNLP** for PhoBERT's `text_seg` (the spec's preferred segmenter): try on Kaggle with
    `RUN_PREPROCESS = True`, `INSTALL_VNCORENLP = True` if Java is available.
 6. **PhoBERT and XLM-R** have only been checked through tests with tiny models; the first Kaggle quick check

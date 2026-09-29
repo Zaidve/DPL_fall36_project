@@ -229,7 +229,8 @@ def test_cli_commands():
         A.main(['merge', '--from', str(root), '--to', str(tmp / 'merged'), '--apply'])
         assert is_run_done('uit-vsfc__xlmr__mtl__seed42__sum', tmp / 'merged')
         assert isinstance(A.main(['check', '--models', str(root)]), list)
-        assert A.main(['cross-eval']) is None                                                 # not built yet
+        runs, _ = A.main(['cross-eval', '--models', str(tmp / 'empty')])
+        assert runs.empty                                                                      # nothing kept yet
 
 
 # --- selection (step 3) -----------------------------------------------------------
@@ -521,6 +522,97 @@ def test_cli_all_on_partial_matrix():
         assert (tmp / 'reports' / 'tables' / 'results_neu-esc.md').is_file()
         assert '(n=2)' in (tmp / 'reports' / 'tables' / 'results_neu-esc.md').read_text(encoding='utf-8')
         assert 'rq5_curves_neu-esc' in out['figures'] and len(out['figures']) == 2
+        assert out['cross_eval'][0].empty                    # fake best.pt files are not checkpoints: skipped, no crash
+
+
+# --- E7 cross-dataset evaluation (step 5) --------------------------------------------------
+
+class HashTokenizer:
+    """ Whitespace words -> stable ids in [4, 200); <s>=0 <pad>=1 </s>=2. No vocabulary, no downloads. """
+    pad_token_id = 1
+
+    def __len__(self):
+        return 200
+
+    def __call__(self, texts, add_special_tokens=True, truncation=False, max_length=None, **_):
+        import zlib
+        out = []
+        for t in texts:
+            ids = [4 + zlib.crc32(w.encode()) % 196 for w in t.split()]
+            if truncation and max_length:
+                ids = ids[:max_length - 2]
+            out.append([0, *ids, 2])
+        return {'input_ids': out, 'attention_mask': [[1] * len(x) for x in out]}
+
+
+def tiny_build(cfg, num_labels):
+    import torch
+    from transformers import AutoModel, BertConfig
+    from architecture import MTLModel
+    torch.manual_seed(0)
+    enc = AutoModel.from_config(BertConfig(vocab_size=200, hidden_size=32, num_hidden_layers=1, num_attention_heads=2,
+                                           intermediate_size=64, max_position_embeddings=128))
+    return MTLModel.from_encoder(enc, num_labels, head=cfg['model'].get('head', 'linear'))
+
+
+def processed_folder(folder, n_test=30):
+    """ Small processed parquet files for both datasets (test split only matters here). """
+    rng = np.random.default_rng(0)
+    for ds, (n_sent, n_topic) in (('neu-esc', (4, 10)), ('uit-vsfc', (3, 4))):
+        rows = [{'id': f'{ds}-test-{i}', 'text_clean': ' '.join(f'w{int(x)}' for x in rng.integers(0, 50, 6)),
+                 'sentiment': int(rng.integers(n_sent)), 'topic': int(rng.integers(n_topic)), 'split': 'test'}
+                for i in range(n_test)]
+        df = pd.DataFrame(rows)
+        df['text_seg'] = df['text_clean']
+        df.to_parquet(Path(folder) / f'{ds}.parquet', index=False)
+
+
+def test_sentiment_3class_mapping():
+    from trainer import cross_eval as CE
+    assert CE.SENTIMENT_3CLASS['neu-esc']['toxic'] == 'negative'
+    assert [CE.CLASSES_3[i] for i in CE.to_3class('neu-esc', [0, 1, 2, 3])] == ['neutral', 'positive', 'negative', 'negative']
+    assert [CE.CLASSES_3[i] for i in CE.to_3class('uit-vsfc', [0, 1, 2])] == ['negative', 'neutral', 'positive']
+    probs = np.array([[0.1, 0.2, 0.3, 0.4]])                                   # neutral, positive, negative, toxic
+    assert np.allclose(CE.probs_to_3class('neu-esc', probs), [[0.7, 0.1, 0.2]])
+
+
+def test_cross_eval_run_and_all():
+    import torch
+    from trainer import cross_eval as CE
+    with workspace() as tmp:
+        (tmp / 'processed').mkdir()
+        processed_folder(tmp / 'processed')
+        with env(DPL_PROCESSED_DIR=tmp / 'processed'):
+            root = tmp / 'models'
+            run = make_run(root, 'neu-esc', 'xlmr', 'mtl', 'sum', 42, keep=True)
+            model = tiny_build({'model': {}}, {'sentiment': 4, 'topic': 10})
+            torch.save({'model': {k: v.half() if v.is_floating_point() else v for k, v in model.state_dict().items()},
+                        'dtype': 'float16'}, run / 'best.pt')                  # like a kept fp16 checkpoint
+            no_ckpt = make_run(root, 'neu-esc', 'xlmr', 'mtl', 'unc', 42)      # not kept: ignored
+            try:
+                CE.load_run_model(no_ckpt, 'cpu', tiny_build)
+                raise AssertionError('missing best.pt not reported')
+            except FileNotFoundError as e:
+                assert 'best.pt' in str(e)
+
+            res = CE.cross_eval_run(run, 'uit-vsfc', device='cpu', build=tiny_build, tokenizer=HashTokenizer())
+            assert res['n'] == 30 and res['max_len'] == 48 and 0 <= res['mf1_3c'] <= 1 and 0 <= res['acc_3c'] <= 1
+            preds = pd.read_csv(run / 'cross_uit-vsfc_test.csv')
+            assert len(preds) == 30 and set(preds['y_pred_3c']) <= {0, 1, 2}
+            assert np.allclose(preds[['prob_negative', 'prob_neutral', 'prob_positive']].sum(1), 1, atol=1e-5)
+
+            runs, table = CE.cross_eval_all([root], device='cpu', build=tiny_build, tokenizer_for=lambda bb: HashTokenizer())
+            assert list(runs['run_id']) == [run.name] and runs.iloc[0]['target'] == 'uit-vsfc'
+            assert abs(runs.iloc[0]['drop'] - (runs.iloc[0]['in_domain_mf1_3c'] - runs.iloc[0]['mf1_3c'])) < 1e-12
+            assert (run / 'cross_eval.json').is_file()
+            assert list(table.columns) == ['model', 'train on', 'test NEU-ESC mF1 (3 labels)',
+                                           'test UIT-VSFC mF1 (3 labels)', 'drop (in − cross)']
+            assert (tmp / 'reports' / 'tables' / 'e7_cross_dataset.md').is_file()
+
+            def boom(cfg, labels):
+                raise AssertionError('cached run was re-evaluated')
+            again, _ = CE.cross_eval_all([root], build=boom)                     # served from cross_eval.json
+            assert again.iloc[0]['mf1_3c'] == runs.iloc[0]['mf1_3c']
 
 
 if __name__ == '__main__':

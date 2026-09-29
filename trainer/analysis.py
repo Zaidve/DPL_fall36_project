@@ -10,9 +10,10 @@
       python -m trainer.analysis significance [--n-boot N]     standard pairs: McNemar per seed + paired bootstrap
       python -m trainer.analysis tables                        results_<dataset>, rq1-rq5, cost, e6_mlm (+ marks)
       python -m trainer.analysis figures                       learning curves, low resource, per class, confusion, ...
-      python -m trainer.analysis all                           significance + tables + figures
+      python -m trainer.analysis cross-eval [--device D] [--force]   E7: kept checkpoints on the other dataset
+      python -m trainer.analysis all                           significance + tables + figures (+ cross-eval if
+                                                               checkpoints exist)
 
-    Built later (matrix plan step 5): cross-eval (E7).
     Every subcommand works on a partially finished matrix and prints what it skipped.
 """
 import argparse
@@ -26,9 +27,6 @@ if str(Path(__file__).resolve().parents[1]) not in sys.path:
 
 from trainer import status as S  # noqa: E402
 from utils.common import models_dir, reports_dir  # noqa: E402
-
-NOT_BUILT = {'cross-eval': 5}
-
 
 def _show(df, title):
     print(f'\n{title}')
@@ -147,11 +145,27 @@ def cmd_figures(args, ctx=None):
     return made
 
 
+def cmd_cross_eval(args):
+    from trainer.cross_eval import cross_eval_all
+    dirs = [Path(d) for d in (getattr(args, 'models', None) or [models_dir()])]
+    runs, table = cross_eval_all(dirs, device=getattr(args, 'device', None), force=getattr(args, 'force', False))
+    if runs.empty:
+        print('\nno finished run with best.pt and a sentiment head yet (E1 st_sentiment/sum, E1 mtl/sum, E4 final)')
+        return runs, table
+    _show(table, f'E7 cross-dataset, 3 sentiment labels ({runs["run_id"].nunique()} checkpoints)')
+    print(f'\n-> {reports_dir() / "tables" / "e7_cross_dataset.md"}; per-run predictions in models/<run_id>/cross_*_test.csv')
+    return runs, table
+
+
 def cmd_all(args):
     ctx = _context(args)
     out = {'significance': cmd_significance(args, ctx), 'tables': cmd_tables(args, ctx),
            'figures': cmd_figures(args, ctx)}
-    print('\ncross-eval (E7) is not built yet (matrix plan step 5)')
+    dirs = [Path(d) for d in (getattr(args, 'models', None) or [models_dir()])]
+    if any(any(d.glob('*/best.pt')) for d in dirs if d.is_dir()):
+        out['cross_eval'] = cmd_cross_eval(args)
+    else:
+        print('\ncross-eval skipped: no kept checkpoints (best.pt) yet')
     return out
 
 
@@ -180,17 +194,19 @@ def main(argv=None):
         p = sub.add_parser(name, help=text)
         p.add_argument('--models', nargs='+')
         p.add_argument('--n-boot', type=int, default=1000, help='bootstrap samples (significance)')
-    for name in NOT_BUILT:
-        sub.add_parser(name, help=f'(matrix plan step {NOT_BUILT[name]}, not built yet)')
+        if name == 'all':
+            p.add_argument('--device', default=None)
+            p.add_argument('--force', action='store_true', help='re-run cached cross-dataset evaluations')
+    p = sub.add_parser('cross-eval', help='E7: evaluate kept checkpoints on the other dataset (3 sentiment labels)')
+    p.add_argument('--models', nargs='+')
+    p.add_argument('--device', default=None, help='cuda / cpu (default: cuda if available)')
+    p.add_argument('--force', action='store_true', help='re-evaluate runs that have cross_eval.json')
     args = parser.parse_args(argv)
 
-    if args.command in NOT_BUILT:
-        print(f'`{args.command}` is not built yet (matrix plan step {NOT_BUILT[args.command]}).')
-        return None
     (reports_dir() / 'tables').mkdir(parents=True, exist_ok=True)
     return {'matrix': cmd_matrix, 'status': cmd_status, 'merge': cmd_merge, 'check': cmd_check,
             'select': cmd_select, 'significance': cmd_significance, 'tables': cmd_tables,
-            'figures': cmd_figures, 'all': cmd_all}[args.command](args)
+            'figures': cmd_figures, 'cross-eval': cmd_cross_eval, 'all': cmd_all}[args.command](args)
 
 
 if __name__ == '__main__':
