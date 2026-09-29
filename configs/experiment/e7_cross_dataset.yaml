@@ -1,0 +1,20 @@
+# E7 Cross-dataset (extra) - priority: Could - NO TRAINING
+# Evaluate kept checkpoints (E1 mtl/sum and the E4 final model) on the other dataset's test split,
+# sentiment only, on 3 shared labels. trainer.train refuses this file (evaluate_only); it is run by the
+# evaluation script for kept checkpoints (not written yet).
+extends: configs/default.yaml
+experiment: e7_cross_dataset
+evaluate_only: true
+sources:
+  - {mode: mtl,      tag: sum}
+  - {mode: mtlaware, tag: bestloss-bestimb}
+pairs:
+  - {train: neu-esc,  test: uit-vsfc}
+  - {train: uit-vsfc, test: neu-esc}
+# Shared 3-label sentiment space: negative / neutral / positive (toxic -> negative).
+# UIT-VSFC ids: 0 negative, 1 neutral, 2 positive (official).
+# NEU-ESC ids: 0 neutral?, 1 positive?, 2 negative?, 3 toxic? - NAMES NOT CONFIRMED; check the paper
+# before running E7, then fix this map if needed.
+sentiment_map:
+  uit-vsfc: {0: negative, 1: neutral, 2: positive}
+  neu-esc:  {0: neutral, 1: positive, 2: negative, 3: negative}

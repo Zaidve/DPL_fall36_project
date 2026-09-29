@@ -1,0 +1,18 @@
+# E3 Imbalance-aware MTL (RQ3) - priority: Must (focal), Should (wce)
+# Does focal loss / class-weighted CE turn the accuracy gain into a Macro-F1 gain (minority classes)?
+# {mtl, st_sentiment, st_topic} x {focal, wce} x best backbone x 2 datasets x 3 seeds = 36 runs
+# MTL uses the best loss from E2 (`bestloss`); write loss_tag: sum in selection.json if E2 was not run.
+# Needs reports/tables/selection.json.
+extends: configs/default.yaml
+experiment: e3_imbalance
+rq: RQ3
+datasets: [neu-esc, uit-vsfc]
+backbones: [best]
+seeds: [42, 123, 2026]
+grid:
+  - {mode: mtl,          tag: bestloss-focal}
+  - {mode: st_sentiment, tag: focal}
+  - {mode: st_topic,     tag: focal}
+  - {mode: mtl,          tag: bestloss-wce}
+  - {mode: st_sentiment, tag: wce}
+  - {mode: st_topic,     tag: wce}

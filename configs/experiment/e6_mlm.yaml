@@ -1,0 +1,11 @@
+# E6 MLM ablation - priority: Could
+# Does an auxiliary masked-language-modelling loss help the final model? (the paper's Table 6 says no)
+# final model + mlm x best backbone x 2 datasets x 3 seeds = 6 runs
+# Needs reports/tables/selection.json with final_tag.
+extends: configs/default.yaml
+experiment: e6_mlm
+datasets: [neu-esc, uit-vsfc]
+backbones: [best]
+seeds: [42, 123, 2026]
+grid:
+  - {mode: mtlaware, tag: final-mlm}

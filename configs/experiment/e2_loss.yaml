@@ -1,0 +1,16 @@
+# E2 Loss balancing (RQ2) - priority: Should
+# Learned loss weighting, PCGrad and correctly implemented SMART vs the equal-sum loss (sum is in E1).
+# mtl x {unc, pcgrad, smartemb} x best backbone x 2 datasets x 3 seeds = 18 runs
+# + gradnorm = 6 more runs (optional; skip with --only and a pattern that excludes it)
+# Needs reports/tables/selection.json (best backbone per dataset, chosen from E1 on validation).
+extends: configs/default.yaml
+experiment: e2_loss
+rq: RQ2
+datasets: [neu-esc, uit-vsfc]
+backbones: [best]
+seeds: [42, 123, 2026]
+grid:
+  - {mode: mtl, tag: unc}
+  - {mode: mtl, tag: pcgrad}
+  - {mode: mtl, tag: smartemb}
+  - {mode: mtl, tag: gradnorm}

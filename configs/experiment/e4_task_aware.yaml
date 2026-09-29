@@ -1,0 +1,14 @@
+# E4 Task-aware heads (RQ4) - priority: Must
+# Do heads that read the other task's prediction beat independent heads? Compare with Cramér's V from the EDA.
+# mtlaware x {sum, best loss + best imbalance} x best backbone x 2 datasets x 3 seeds = 12 runs
+# mtlaware/bestloss-bestimb is the final model (checkpoint kept, fp16, for E7).
+# Needs reports/tables/selection.json with loss_tag and imbalance_tag.
+extends: configs/default.yaml
+experiment: e4_task_aware
+rq: RQ4
+datasets: [neu-esc, uit-vsfc]
+backbones: [best]
+seeds: [42, 123, 2026]
+grid:
+  - {mode: mtlaware, tag: sum}
+  - {mode: mtlaware, tag: bestloss-bestimb}

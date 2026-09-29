@@ -95,6 +95,9 @@ class RunSpec:
 def load_experiment(path):
     """ Experiment YAML merged with what it extends (normally configs/default.yaml). """
     exp = load_config(path)
+    if exp.get('evaluate_only'):
+        raise ValueError(f'{path} is an evaluation-only experiment (no training); it is run by the evaluation '
+                         'script for kept checkpoints, not by trainer.train')
     for key in ('backbones', 'seeds', 'grid'):
         if not exp.get(key):
             raise ValueError(f'{path}: experiment needs a non-empty `{key}` list')
@@ -170,6 +173,14 @@ def resolve_tag(tag, selection_ds):
     return '-'.join(out)
 
 
+def needs_checkpoint(mode, raw_tag):
+    """ Runs E7 (cross-dataset) evaluates keep best.pt: E1 mtl/sum and the final model
+        (mtlaware with the selected loss / imbalance tags, no frac / mlm variants). """
+    tokens = set(raw_tag.split('-'))
+    return (mode == 'mtl' and raw_tag == 'sum') or (
+        mode == 'mtlaware' and bool(tokens) and tokens <= {'final', 'bestloss', 'bestimb'})
+
+
 def expand_runs(exp):
     """ RunSpec for every datasets x backbones x grid x seeds combination, with tags applied. """
     selection = load_selection() if _needs_selection(exp) else {}
@@ -183,8 +194,7 @@ def expand_runs(exp):
                 tag = resolve_tag(raw_tag, selection.get(ds))
                 for seed in exp['seeds']:
                     cfg = apply_tag_overrides(base, mode, tag)
-                    keep = (cfg['train'].get('keep_checkpoint', False)
-                            or (mode == 'mtl' and tag == 'sum') or 'final' in raw_tag.split('-'))
+                    keep = cfg['train'].get('keep_checkpoint', False) or needs_checkpoint(mode, raw_tag)
                     cfg = apply_overrides(cfg, {'model.backbone': backbone, 'data.dataset': ds, 'train.seed': int(seed),
                                                 'train.keep_checkpoint': keep, **entry.get('overrides', {})})
                     run_id = make_run_id(ds, backbone, mode, seed, tag)
@@ -412,9 +422,13 @@ def train_one_run(spec, max_steps=None, root=None):
             'text_column': info['text_column'], 'skipped_steps': skipped, 'amp': use_amp, 'device': str(device),
             'max_steps': max_steps,
         }
-        write_metrics(run_path, metrics)
-        if not tc.get('keep_checkpoint', False):
+        if tc.get('keep_checkpoint', False):
+            # kept for later evaluation only: fp16 halves the size (disk on Kaggle is ~20 GB)
+            half = {k: v.half() if v.is_floating_point() else v for k, v in model.state_dict().items()}
+            torch.save({'model': half, 'epoch': best_epoch, 'score': best_score, 'dtype': 'float16'}, best_path)
+        else:
             best_path.unlink(missing_ok=True)
+        write_metrics(run_path, metrics)
         log.info(f'done: best epoch {best_epoch}, validation {results["validation"]["macro_f1_mean"]:.4f}, '
                  f'test {results["test"]["macro_f1_mean"]:.4f}, {train_time / 60:.1f} min')
         return metrics

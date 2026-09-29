@@ -185,10 +185,44 @@ def test_full_run_writes_all_files():
         assert m['final_task_weights'] != {'sentiment': 1.0, 'topic': 1.0}   # uncertainty weights were learned
 
 
-def test_mtl_sum_keeps_checkpoint():
+def test_mtl_sum_keeps_fp16_checkpoint():
     with sandbox() as tmp:
         T.main(['--experiment', experiment(tmp, [{'mode': 'mtl', 'tag': 'sum'}], epochs=1)])
-        assert (run_folder(tmp, 'uit-vsfc__phobert__mtl__seed1__sum') / 'best.pt').is_file()   # E7 needs it
+        folder = run_folder(tmp, 'uit-vsfc__phobert__mtl__seed1__sum')
+        state = torch.load(folder / 'best.pt', weights_only=True)                     # E7 needs it
+        assert state['dtype'] == 'float16' and state['epoch'] == 1
+        floats = [v for v in state['model'].values() if v.is_floating_point()]
+        assert floats and all(v.dtype == torch.float16 for v in floats)
+        cfg = T.load_experiment(experiment(tmp, [{'mode': 'mtl', 'tag': 'sum'}]))
+        model = fake_build_model(T.expand_runs(cfg)[0].cfg, NUM_LABELS)
+        model.load_state_dict(state['model'])                                          # loads into fp32
+        assert next(model.parameters()).dtype == torch.float32
+
+
+def test_checkpoint_rule_and_evaluate_only():
+    assert T.needs_checkpoint('mtl', 'sum')
+    assert T.needs_checkpoint('mtlaware', 'bestloss-bestimb') and T.needs_checkpoint('mtlaware', 'final')
+    for mode, tag in (('mtl', 'sum-frac0.1'), ('mtlaware', 'final-frac0.5'), ('mtlaware', 'final-mlm'),
+                      ('mtlaware', 'sum'), ('st_topic', 'sum'), ('mtl', 'unc')):
+        assert not T.needs_checkpoint(mode, tag), (mode, tag)
+    try:
+        T.load_experiment('configs/experiment/e7_cross_dataset.yaml')
+        raise AssertionError('evaluation-only experiment not refused')
+    except ValueError as e:
+        assert 'evaluation-only' in str(e)
+
+
+def test_shipped_experiment_configs_expand():
+    """ Every configs/experiment file expands to the run counts of models_spec.md B3. """
+    expected = {'e1_baseline': 54, 'e1b_smart_ref': 18, 'e2_loss': 24, 'e3_imbalance': 36, 'e4_task_aware': 12,
+                'e4b_direction': 12, 'e5_low_resource': 72, 'e6_mlm': 6}
+    with sandbox() as tmp:
+        save_json({ds: {'backbone': 'visobert', 'loss_tag': 'unc', 'imbalance_tag': 'focal', 'final_tag': 'unc-focal'}
+                   for ds in ('neu-esc', 'uit-vsfc')}, Path(tmp) / 'reports' / 'tables' / 'selection.json')
+        for name, n in expected.items():
+            specs = T.expand_runs(T.load_experiment(f'configs/experiment/{name}.yaml'))
+            assert len(specs) == n, (name, len(specs))
+            assert all(s.cfg['run']['experiment'] == name for s in specs)
 
 
 # 4

@@ -1,0 +1,12 @@
+# E1b Reference SMART (RQ2) - priority: Should
+# The reference code's "SMART" (noise on token ids, no adversarial step), reproduced for comparison only.
+# mtl x tag smartref x 3 backbones x 2 datasets x 3 seeds = 18 runs
+# To save compute, run one backbone: --only __phobert__
+extends: configs/default.yaml
+experiment: e1b_smart_ref
+rq: RQ2
+datasets: [neu-esc, uit-vsfc]
+backbones: [xlmr, visobert, phobert]
+seeds: [42, 123, 2026]
+grid:
+  - {mode: mtl, tag: smartref}

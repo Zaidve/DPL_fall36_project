@@ -1,0 +1,13 @@
+# E4b Direction ablation (RQ4) - priority: Could
+# Which direction helps: sentiment reading topic, or topic reading sentiment? (`both` is E4 mtlaware/sum)
+# mtlaware/sum x cross in {sent_from_topic, topic_from_sent} x best backbone x 2 datasets x 3 seeds = 12 runs
+# Needs reports/tables/selection.json.
+extends: configs/default.yaml
+experiment: e4b_direction
+rq: RQ4
+datasets: [neu-esc, uit-vsfc]
+backbones: [best]
+seeds: [42, 123, 2026]
+grid:
+  - {mode: mtlaware, tag: sum-cross_sent}
+  - {mode: mtlaware, tag: sum-cross_topic}

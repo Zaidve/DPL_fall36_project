@@ -1,0 +1,14 @@
+# E1 Baseline reproduction (RQ1) - priority: Must
+# Does MTL beat single-task on Macro-F1 (not only accuracy)? Also picks the best backbone per dataset.
+# {st_sentiment, st_topic, mtl} x tag sum x 3 backbones x 2 datasets x 3 seeds = 54 runs
+# mtl/sum keeps its checkpoint (fp16) for E7.
+extends: configs/default.yaml
+experiment: e1_baseline
+rq: RQ1
+datasets: [neu-esc, uit-vsfc]
+backbones: [xlmr, visobert, phobert]
+seeds: [42, 123, 2026]
+grid:
+  - {mode: st_sentiment, tag: sum}
+  - {mode: st_topic,     tag: sum}
+  - {mode: mtl,          tag: sum}

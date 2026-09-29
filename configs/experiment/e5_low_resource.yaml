@@ -1,0 +1,24 @@
+# E5 Low resource (RQ5) - priority: Could
+# Does MTL help more with little training data (10 / 25 / 50% of train, nested stratified subsets)?
+# {st_sentiment, st_topic, mtl/sum, final model} x frac {0.1, 0.25, 0.5} x best backbone x 2 datasets x 3 seeds
+#   = 72 runs (100% is reused from E1 / E4). To cut cost: --only neu-esc__
+# `final` = selection.json final_tag (the final model's loss tags). Needs reports/tables/selection.json.
+extends: configs/default.yaml
+experiment: e5_low_resource
+rq: RQ5
+datasets: [neu-esc, uit-vsfc]
+backbones: [best]
+seeds: [42, 123, 2026]
+grid:
+  - {mode: st_sentiment, tag: sum-frac0.1}
+  - {mode: st_topic,     tag: sum-frac0.1}
+  - {mode: mtl,          tag: sum-frac0.1}
+  - {mode: mtlaware,     tag: final-frac0.1}
+  - {mode: st_sentiment, tag: sum-frac0.25}
+  - {mode: st_topic,     tag: sum-frac0.25}
+  - {mode: mtl,          tag: sum-frac0.25}
+  - {mode: mtlaware,     tag: final-frac0.25}
+  - {mode: st_sentiment, tag: sum-frac0.5}
+  - {mode: st_topic,     tag: sum-frac0.5}
+  - {mode: mtl,          tag: sum-frac0.5}
+  - {mode: mtlaware,     tag: final-frac0.5}
