@@ -13,7 +13,7 @@ running the experiment matrix on Kaggle and reading the results.
 
 | Item | State |
 |---|---|
-| Git | branch `master`, everything committed (last: `8f4f382`, memory-lean PCGrad + these docs), **no remote yet** |
+| Git | branch `main`, pushed to the **public** repo `https://github.com/Zaidve/DPL_fall36_project` (`origin`); a fresh clone contains everything training needs (19 MB) |
 | Tests | 116 passing (9 files in `tests/`, plain Python, CPU, no downloads) |
 | Data | `data/processed/*.parquet` + `*_subsets.json` committed (training input) |
 | Trained runs | none (only debug runs in the scratch folder, not in `models/`) |
@@ -25,14 +25,13 @@ running the experiment matrix on Kaggle and reading the results.
 
 ## 2. Do next, in order
 
-### Step 0: get the code to Kaggle (once)
+### Step 0: get the code to Kaggle (done)
 
-Everything is committed. **Either**
-- create an empty GitHub repository, `git remote add origin <url>`, `git push -u origin master`, and set
-  `GIT_URL = '<url>'` in the Kaggle runner (private repo: needs a token; public is simpler), **or**
-- zip the project folder **without** `.venv/` and `models/` and upload it as a Kaggle Dataset (keep `GIT_URL = None`).
-
-`data/processed/` must be included either way (it is committed, 10 MB).
+The runner's settings cell already has `GIT_URL = 'https://github.com/Zaidve/DPL_fall36_project.git'` and
+`GIT_BRANCH = 'main'`, so Kaggle clones the repo (public: no token needed). `data/processed/` is in the repo.
+After any code change: commit and `git push`; the next Kaggle session pulls it (`git pull --ff-only` if the clone
+already exists in `/kaggle/working`). Alternative without GitHub: upload the folder (without `.venv/`, `models/`)
+as a Kaggle Dataset and set `GIT_URL = None`.
 
 ### Step 1: Kaggle quick check (~10 min)
 

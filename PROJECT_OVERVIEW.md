@@ -241,7 +241,8 @@ after E1 (and E2) from **validation** scores.
 ## 4. Running on Kaggle (`notebooks/kaggle_runner.ipynb`)
 
 1. Notebook settings: **GPU T4**, **Internet On**.
-2. Code: set `GIT_URL` (the repo includes `data/processed/`) or attach the project as a Kaggle Dataset.
+2. Code: the runner clones `https://github.com/Zaidve/DPL_fall36_project` (public, branch `main`; `GIT_URL` is
+   preset and the repo includes `data/processed/`), or set `GIT_URL = None` and attach the project as a Kaggle Dataset.
 3. Edit the settings cell: `EXPERIMENT`, optionally `ONLY`, `MAX_STEPS` (start with 20 as a quick check).
 4. Run all: installs `sentencepiece` + `underthesea`, checks the GPU (stops on an unsupported one, e.g. P100),
    prints the matrix status (progress, failures, remaining GPU-hours, session plan), lists the runs, trains,
