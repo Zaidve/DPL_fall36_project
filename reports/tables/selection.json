@@ -1,0 +1,54 @@
+{
+  "neu-esc": {
+    "backbone": "visobert",
+    "provenance": {
+      "backbone": {
+        "stage": "e1",
+        "metric": "validation macro_f1_mean",
+        "choice": "visobert",
+        "written": "2026-09-30",
+        "scores": {
+          "xlmr": 0.6994861729538151,
+          "visobert": 0.7039494540305701,
+          "phobert": 0.7025215040986548
+        },
+        "n_seeds": {
+          "xlmr": 3,
+          "visobert": 3,
+          "phobert": 3
+        },
+        "single_task_mean": {
+          "xlmr": 0.7033932355307795,
+          "visobert": 0.7069223448793711,
+          "phobert": 0.7038912257923198
+        }
+      }
+    }
+  },
+  "uit-vsfc": {
+    "backbone": "phobert",
+    "provenance": {
+      "backbone": {
+        "stage": "e1",
+        "metric": "validation macro_f1_mean",
+        "choice": "phobert",
+        "written": "2026-09-30",
+        "scores": {
+          "xlmr": 0.8315613091296998,
+          "visobert": 0.8175412434705341,
+          "phobert": 0.8394255178925113
+        },
+        "n_seeds": {
+          "xlmr": 3,
+          "visobert": 3,
+          "phobert": 3
+        },
+        "single_task_mean": {
+          "xlmr": 0.8306610563988732,
+          "visobert": 0.8276519859189229,
+          "phobert": 0.8406115397857421
+        }
+      }
+    }
+  }
+}

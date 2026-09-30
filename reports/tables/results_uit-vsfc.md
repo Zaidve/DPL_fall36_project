@@ -1,0 +1,8 @@
+| block | model | Sent Acc | Sent mF1 | Sent wF1 | Topic Acc | Topic mF1 | Topic wF1 |
+|---|---|---:|---:|---:|---:|---:|---:|
+| Our reproduction | Single task XLM-R | 93.22 ± 0.32 | 82.17 ± 1.19 | 92.94 ± 0.42 | 88.91 ± 0.29 | 79.81 ± 0.38 | 88.87 ± 0.30 |
+| Our reproduction | 2-task XLM-R | 93.54 ± 0.24 | 81.74 ± 0.69 | 93.17 ± 0.23 | 88.51 ± 0.47 | 78.98 ± 0.83 | 88.48 ± 0.51 |
+| Our reproduction | Single task ViSoBERT | 92.78 ± 0.21 | 81.16 ± 0.48 | 92.56 ± 0.19 | 88.51 ± 0.46 | 79.17 ± 0.56 | 88.39 ± 0.31 |
+| Our reproduction | 2-task ViSoBERT | 92.75 ± 0.13 | 81.27 ± 0.25 | 92.53 ± 0.14 | 88.65 ± 0.59 | 79.37 ± 0.94 | 88.58 ± 0.55 |
+| Our reproduction | Single task PhoBERT | 93.78 ± 0.11 | 82.64 ± 0.49* | 93.49 ± 0.12* | 89.19 ± 0.45* | 80.06 ± 0.80* | 89.02 ± 0.38* |
+| Our reproduction | 2-task PhoBERT | 93.82 ± 0.54* | 82.08 ± 2.04 | 93.44 ± 0.64 | 88.78 ± 0.38 | 79.61 ± 0.82 | 88.69 ± 0.38 |
