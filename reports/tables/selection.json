@@ -46,9 +46,32 @@
         "rule_choice": "pcgrad",
         "reason": "No E2 strategy (unc, pcgrad, smartemb, gradnorm) is significantly better than the equal sum on either dataset (paired bootstrap of test macro-F1 includes 0 for every pair; McNemar never agrees on all 3 seeds), so the simplest and cheapest strategy is kept. PCGrad, the rule's choice on neu-esc by +0.004 validation macro-F1, costs 7.5x the training time.",
         "note": "manual choice (rule: pcgrad): No E2 strategy (unc, pcgrad, smartemb, gradnorm) is significantly better than the equal sum on either dataset (paired bootstrap of test macro-F1 includes 0 for every pair; McNemar never agrees on all 3 seeds), so the simplest and cheapest strategy is kept. PCGrad, the rule's choice on neu-esc by +0.004 validation macro-F1, costs 7.5x the training time."
+      },
+      "imbalance": {
+        "stage": "e3",
+        "metric": "validation macro_f1_mean",
+        "choice": "none",
+        "written": "2026-10-01",
+        "scores": {
+          "none": 0.7039494540305701,
+          "focal": 0.7023610167348439,
+          "wce": 0.7038454751072584
+        },
+        "n_seeds": {
+          "none": 3,
+          "focal": 3,
+          "wce": 3
+        },
+        "tags": {
+          "none": "sum",
+          "focal": "sum-focal",
+          "wce": "sum-wce"
+        }
       }
     },
-    "loss_tag": "sum"
+    "loss_tag": "sum",
+    "imbalance_tag": "none",
+    "final_tag": "sum"
   },
   "uit-vsfc": {
     "backbone": "phobert",
@@ -97,8 +120,31 @@
         "rule_choice": "sum",
         "reason": "No E2 strategy (unc, pcgrad, smartemb, gradnorm) is significantly better than the equal sum on either dataset (paired bootstrap of test macro-F1 includes 0 for every pair; McNemar never agrees on all 3 seeds), so the simplest and cheapest strategy is kept. PCGrad, the rule's choice on neu-esc by +0.004 validation macro-F1, costs 7.5x the training time.",
         "note": "manual choice (rule: sum): No E2 strategy (unc, pcgrad, smartemb, gradnorm) is significantly better than the equal sum on either dataset (paired bootstrap of test macro-F1 includes 0 for every pair; McNemar never agrees on all 3 seeds), so the simplest and cheapest strategy is kept. PCGrad, the rule's choice on neu-esc by +0.004 validation macro-F1, costs 7.5x the training time."
+      },
+      "imbalance": {
+        "stage": "e3",
+        "metric": "validation macro_f1_mean",
+        "choice": "none",
+        "written": "2026-10-01",
+        "scores": {
+          "none": 0.8394255178925113,
+          "focal": 0.837683610423484,
+          "wce": 0.8381429995538111
+        },
+        "n_seeds": {
+          "none": 3,
+          "focal": 3,
+          "wce": 3
+        },
+        "tags": {
+          "none": "sum",
+          "focal": "sum-focal",
+          "wce": "sum-wce"
+        }
       }
     },
-    "loss_tag": "sum"
+    "loss_tag": "sum",
+    "imbalance_tag": "none",
+    "final_tag": "sum"
   }
 }

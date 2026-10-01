@@ -164,7 +164,7 @@ def _needs_selection(exp):
 
 
 def resolve_tag(tag, selection_ds, keep_missing=False):
-    """ Replace bestloss / bestimb / final with the tags chosen for this dataset.
+    """ Replace bestloss / bestimb / final with the tags chosen for this dataset (imbalance `none` adds no tag).
         keep_missing=True leaves a token as a placeholder when its selection stage is not written yet. """
     out = []
     for token in tag.split('-'):
@@ -175,7 +175,7 @@ def resolve_tag(tag, selection_ds, keep_missing=False):
                     out.append(token)
                     continue
                 raise KeyError(f'selection.json has no {SELECTION_TOKENS[token]!r} for this dataset')
-            out += [t for t in value.split('-') if t not in out]
+            out += [t for t in value.split('-') if t not in out and t != 'none']
         elif token not in out:
             out.append(token)
     return '-'.join(out)
@@ -204,7 +204,7 @@ def expand_runs(exp, placeholders=False):
             if not placeholders:
                 raise
     base = {k: v for k, v in exp.items() if k not in ('datasets', 'backbones', 'seeds', 'grid')}
-    specs, seen = [], set()
+    specs, seen = [], {}
     for ds in exp['datasets']:
         for bb in exp['backbones']:
             backbone = bb
@@ -226,12 +226,18 @@ def expand_runs(exp, placeholders=False):
                                                 'train.keep_checkpoint': keep, **entry.get('overrides', {})})
                     run_id = make_run_id(ds, backbone, mode, seed, tag)
                     if run_id in seen:
-                        raise ValueError(f'duplicate run id {run_id}')
-                    seen.add(run_id)
+                        # two grid entries can become the same run once the selection is known
+                        # (e.g. E4 `sum` and `bestloss-bestimb` when the selection is sum / none): train it once
+                        if tag == raw_tag and seen[run_id][1] == raw_tag:
+                            raise ValueError(f'duplicate run id {run_id}')
+                        first = seen[run_id][0]
+                        first.cfg['train']['keep_checkpoint'] = first.cfg['train']['keep_checkpoint'] or keep
+                        continue
                     cfg['run'] = {'run_id': run_id, 'experiment': exp.get('experiment'), 'dataset': ds,
                                   'backbone': backbone, 'mode': mode, 'tag': tag, 'seed': int(seed),
                                   'placeholder': placeholder}
                     specs.append(RunSpec(run_id, ds, backbone, mode, tag, int(seed), cfg))
+                    seen[run_id] = (specs[-1], raw_tag)
     return specs
 
 

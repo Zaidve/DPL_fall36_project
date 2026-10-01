@@ -374,6 +374,25 @@ def test_time_budget_stops_before_the_next_run():
         assert summary['skipped'] == 1 and summary['done'] == 1 and summary['not_started'] == []
 
 
+# 16
+def test_selection_sum_none_resolves_and_merges_duplicates():
+    assert T.resolve_tag('bestloss-bestimb', {'loss_tag': 'sum', 'imbalance_tag': 'none'}) == 'sum'
+    assert T.resolve_tag('final-frac0.1', {'final_tag': 'sum'}) == 'sum-frac0.1'
+    with sandbox() as tmp:
+        save_json({ds: {'backbone': 'visobert', 'loss_tag': 'sum', 'imbalance_tag': 'none', 'final_tag': 'sum'}
+                   for ds in ('neu-esc', 'uit-vsfc')}, Path(tmp) / 'reports' / 'tables' / 'selection.json')
+        # E4: `sum` and `bestloss-bestimb` are now the same run: trained once, checkpoint kept (final model)
+        specs = T.expand_runs(T.load_experiment('configs/experiment/e4_task_aware.yaml'))
+        assert len(specs) == 6 and len({s.run_id for s in specs}) == 6
+        assert all(s.tag == 'sum' and s.cfg['train']['keep_checkpoint'] for s in specs)
+        # a grid that repeats an entry literally is still an error
+        try:
+            T.expand_runs(T.load_experiment(experiment(tmp, [{'mode': 'mtl', 'tag': 'sum'}, {'mode': 'mtl', 'tag': 'sum'}])))
+            raise AssertionError('duplicate grid entry accepted')
+        except ValueError as e:
+            assert 'duplicate run id' in str(e)
+
+
 if __name__ == '__main__':
     tests = [(name, fn) for name, fn in list(globals().items()) if name.startswith('test_')]
     failed = 0
