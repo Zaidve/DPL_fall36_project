@@ -2,7 +2,7 @@
     Experiment runner (train_spec.md): an experiment YAML -> finished run folders under models/.
 
       python -m trainer.train --experiment configs/experiment/e1_baseline.yaml
-                              [--only SUBSTRING] [--dry-run] [--max-steps N]
+                              [--only SUBSTRING] [--dry-run] [--max-steps N] [--time-budget-hours H]
 
     Experiment level: load_experiment -> expand_runs (datasets x backbones x grid x seeds, tags applied,
     `best` resolved from reports/tables/selection.json) -> for each run: skip if done, else
@@ -15,6 +15,10 @@
 
     --max-steps N caps the training batches per epoch for quick checks; those runs go to
     models/_debug/ so they are never mistaken for finished runs.
+
+    --time-budget-hours H stops starting new runs when the next one would probably not finish within
+    H hours (time used so far + the longest run of this session > H). A Kaggle session killed at its
+    12-hour limit saves no output, so stopping early keeps the finished runs; re-run to continue.
 
     Tags (models_spec.md B5, combine with '-'):
       sum | unc | pcgrad | gradnorm | dwa | fixed<alpha>    loss.strategy
@@ -473,6 +477,8 @@ def main(argv=None):
     parser.add_argument('--only', default=None, help='only runs whose id contains this substring')
     parser.add_argument('--dry-run', action='store_true', help='print the run list and counts, train nothing')
     parser.add_argument('--max-steps', type=int, default=None, help='cap training batches per epoch (quick check)')
+    parser.add_argument('--time-budget-hours', type=float, default=None,
+                        help='do not start a run that would probably end after this many hours')
     args = parser.parse_args(argv)
 
     from transformers import logging as hf_logging
@@ -491,14 +497,22 @@ def main(argv=None):
         print(f'\n{len(specs)} runs: {len(done)} done, {len(specs) - len(done)} to train  (models: {root})')
         return {'runs': len(specs), 'done': len(done), 'to_train': len(specs) - len(done)}
 
-    summary = {'done': 0, 'skipped': 0, 'failed': 0, 'failed_runs': []}
+    summary = {'done': 0, 'skipped': 0, 'failed': 0, 'failed_runs': [], 'not_started': []}
     start = time.time()
+    longest = 0.0   # longest run of this session (s): the guess for how long the next one takes
     for n, spec in enumerate(specs, 1):
         if is_run_done(spec.run_id, root):
             log.info(f'[{n}/{len(specs)}] skip {spec.run_id} (done)')
             summary['skipped'] += 1
             continue
+        if args.time_budget_hours is not None and time.time() - start + longest > args.time_budget_hours * 3600:
+            summary['not_started'] = [s.run_id for s in specs[n - 1:] if not is_run_done(s.run_id, root)]
+            log.warning(f'time budget {args.time_budget_hours:g} h: {(time.time() - start) / 3600:.1f} h used, '
+                        f'longest run {longest / 3600:.1f} h; {len(summary["not_started"])} runs not started '
+                        f'(run again to continue)')
+            break
         log.info(f'[{n}/{len(specs)}] train {spec.run_id}')
+        run_start = time.time()
         try:
             train_one_run(spec, max_steps=args.max_steps, root=root)
             summary['done'] += 1
@@ -510,12 +524,13 @@ def main(argv=None):
             summary['failed'] += 1
             summary['failed_runs'].append(spec.run_id)
         finally:
+            longest = max(longest, time.time() - run_start)
             gc.collect()
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
     summary['time_min'] = (time.time() - start) / 60
     log.info(f'finished: {summary["done"]} trained, {summary["skipped"]} skipped, {summary["failed"]} failed, '
-             f'{summary["time_min"]:.1f} min')
+             f'{len(summary["not_started"])} not started, {summary["time_min"]:.1f} min')
     return summary
 
 

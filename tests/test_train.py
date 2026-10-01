@@ -363,6 +363,17 @@ def test_best_selection_and_max_steps_debug_root():
         assert not is_run_done('uit-vsfc__visobert__mtlaware__seed1__unc-focal')   # real run still to do
 
 
+# 15
+def test_time_budget_stops_before_the_next_run():
+    with sandbox() as tmp:
+        exp = experiment(tmp, [{'mode': 'st_topic', 'tag': 'sum'}, {'mode': 'mtl', 'tag': 'sum'}], epochs=1)
+        # the first run starts (nothing measured yet), the second would end after the budget
+        summary = T.main(['--experiment', exp, '--time-budget-hours', str(0.05 / 3600)])
+        assert summary['done'] == 1 and summary['not_started'] == ['uit-vsfc__phobert__mtl__seed1__sum']
+        summary = T.main(['--experiment', exp, '--time-budget-hours', '10'])       # resume: the rest
+        assert summary['skipped'] == 1 and summary['done'] == 1 and summary['not_started'] == []
+
+
 if __name__ == '__main__':
     tests = [(name, fn) for name, fn in list(globals().items()) if name.startswith('test_')]
     failed = 0
