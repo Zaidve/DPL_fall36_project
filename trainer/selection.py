@@ -13,6 +13,10 @@
     candidate has fewer than 3 seeds (unless allow_partial; the message lists the missing run ids).
     Re-writing a stage with force removes the later stages, which were chosen on top of it.
 
+    A manual choice (choose + reason) replaces the rule's choice for every dataset, e.g. the simplest
+    option when no candidate is significantly better, or to exclude a candidate for its cost. It must be one
+    of the stage's candidates; the provenance keeps the reason, the rule's choice and all validation scores.
+
       {"neu-esc": {"backbone": "visobert", "loss_tag": "unc", "imbalance_tag": "focal", "final_tag": "unc-focal",
                    "provenance": {"backbone": {"stage": "e1", "metric": "validation macro_f1_mean",
                                                "scores": {...}, "n_seeds": {...}, "written": "2026-10-05"}, ...}}}
@@ -149,10 +153,13 @@ def _stage_candidates(stage, dataset, current, e1, e2, e3):
     return [('mtl', backbone, [loss], [f'{loss}-{v}' for v in variants])]
 
 
-def write_selection(stage, models_dirs=None, out_path=None, allow_partial=False, force=False, today=None):
+def write_selection(stage, models_dirs=None, out_path=None, allow_partial=False, force=False, today=None,
+                    choose=None, reason=None):
     """ Add one stage to selection.json (see module docstring). Returns the new selection dict. """
     if stage not in STAGES:
         raise ValueError(f'unknown stage {stage!r}; choose from {STAGES}')
+    if choose and not (reason or '').strip():
+        raise SelectionError('a manual choice needs a reason (it is stored in selection.json)')
     out_path = Path(out_path or selection_path())
     selection = load_json(out_path) if out_path.exists() else {}
     e1, e2, e3 = _experiment('e1_baseline'), _experiment('e2_loss'), _experiment('e3_imbalance')
@@ -204,6 +211,15 @@ def write_selection(stage, models_dirs=None, out_path=None, allow_partial=False,
             continue
         if missing:
             info['note'] = (info.get('note', '') + ' partial: ' + ', '.join(missing)).strip()
+        if choose:
+            if choose not in info['scores']:
+                problems.append(f'{ds}: `{choose}` is not a candidate of stage `{stage}` '
+                                f'(candidates: {", ".join(sorted(info["scores"]))})')
+                continue
+            info.update(manual=True, rule_choice=choice, reason=reason.strip())
+            info['note'] = (info.get('note', '') + f' manual choice (rule: {choice}): {reason.strip()}').strip()
+            choice = choose
+            fields = {'backbone': choice} if stage == 'backbone' else {'loss_tag': choice} if stage == 'loss' else                 {'imbalance_tag': choice, 'final_tag': final_tag(current['loss_tag'], choice)}
 
         # re-writing a stage invalidates the stages chosen on top of it
         for later in STAGES[index + 1:]:

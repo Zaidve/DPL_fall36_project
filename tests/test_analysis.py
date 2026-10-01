@@ -351,6 +351,34 @@ def test_write_selection_stages():
         assert set(sel['neu-esc']) == {'backbone', 'provenance'} and set(sel['neu-esc']['provenance']) == {'backbone'}
 
 
+def test_manual_choice_needs_reason_and_candidate():
+    import json
+    from trainer import selection as SEL
+    with workspace() as tmp:
+        root, path = tmp / 'models', tmp / 'reports' / 'tables' / 'selection.json'
+        e1_runs(root, {'xlmr': (0.60, 0.9), 'visobert': (0.66, 0.9), 'phobert': (0.70, 0.5)})
+        mtl_runs(root, 'phobert', 'pcgrad', 0.75)                                  # the rule would pick pcgrad
+        SEL.write_selection('backbone', [root])
+        for kw in ({'choose': 'sum'}, {'choose': 'dwa', 'reason': 'not a candidate'}):
+            try:
+                SEL.write_selection('loss', [root], **kw)
+                raise AssertionError(f'should have been refused: {kw}')
+            except SEL.SelectionError:
+                assert 'loss_tag' not in json.loads(path.read_text(encoding='utf-8'))['neu-esc']
+        sel = SEL.write_selection('loss', [root], choose='sum', reason='no strategy is significantly better')
+        for ds in ('neu-esc', 'uit-vsfc'):
+            prov = sel[ds]['provenance']['loss']
+            assert sel[ds]['loss_tag'] == prov['choice'] == 'sum' and prov['manual'] is True
+            assert prov['rule_choice'] == 'pcgrad' and 'significantly' in prov['reason']
+            assert set(prov['scores']) == {'sum', 'pcgrad'}                         # every score is kept
+        assert 'manual choice (rule: pcgrad)' in SEL.explain_selection(path)['note'].iloc[-1]
+        # the next stage builds on the manual choice; a manual imbalance choice sets final_tag
+        mtl_runs(root, 'phobert', 'sum-focal', 0.78)
+        sel = SEL.write_selection('imbalance', [root], choose='none', reason='keep it simple')
+        assert sel['neu-esc']['imbalance_tag'] == 'none' and sel['neu-esc']['final_tag'] == 'sum'
+        assert sel['neu-esc']['provenance']['imbalance']['rule_choice'] == 'focal'
+
+
 def test_select_cli_and_explain():
     with workspace() as tmp:
         root = tmp / 'models'

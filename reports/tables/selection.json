@@ -22,8 +22,33 @@
           "visobert": 0.7069223448793711,
           "phobert": 0.7038912257923198
         }
+      },
+      "loss": {
+        "stage": "e1+e2",
+        "metric": "validation macro_f1_mean",
+        "choice": "sum",
+        "written": "2026-10-01",
+        "scores": {
+          "gradnorm": 0.7048495015930722,
+          "pcgrad": 0.7079609798705219,
+          "smartemb": 0.7057818224640712,
+          "sum": 0.7039494540305701,
+          "unc": 0.7043569396789701
+        },
+        "n_seeds": {
+          "gradnorm": 3,
+          "pcgrad": 3,
+          "smartemb": 3,
+          "sum": 3,
+          "unc": 3
+        },
+        "manual": true,
+        "rule_choice": "pcgrad",
+        "reason": "No E2 strategy (unc, pcgrad, smartemb, gradnorm) is significantly better than the equal sum on either dataset (paired bootstrap of test macro-F1 includes 0 for every pair; McNemar never agrees on all 3 seeds), so the simplest and cheapest strategy is kept. PCGrad, the rule's choice on neu-esc by +0.004 validation macro-F1, costs 7.5x the training time.",
+        "note": "manual choice (rule: pcgrad): No E2 strategy (unc, pcgrad, smartemb, gradnorm) is significantly better than the equal sum on either dataset (paired bootstrap of test macro-F1 includes 0 for every pair; McNemar never agrees on all 3 seeds), so the simplest and cheapest strategy is kept. PCGrad, the rule's choice on neu-esc by +0.004 validation macro-F1, costs 7.5x the training time."
       }
-    }
+    },
+    "loss_tag": "sum"
   },
   "uit-vsfc": {
     "backbone": "phobert",
@@ -48,7 +73,32 @@
           "visobert": 0.8276519859189229,
           "phobert": 0.8406115397857421
         }
+      },
+      "loss": {
+        "stage": "e1+e2",
+        "metric": "validation macro_f1_mean",
+        "choice": "sum",
+        "written": "2026-10-01",
+        "scores": {
+          "gradnorm": 0.8383152683600397,
+          "pcgrad": 0.8384002664068894,
+          "smartemb": 0.8382904668165058,
+          "sum": 0.8394255178925113,
+          "unc": 0.8377880392336073
+        },
+        "n_seeds": {
+          "gradnorm": 3,
+          "pcgrad": 3,
+          "smartemb": 3,
+          "sum": 3,
+          "unc": 3
+        },
+        "manual": true,
+        "rule_choice": "sum",
+        "reason": "No E2 strategy (unc, pcgrad, smartemb, gradnorm) is significantly better than the equal sum on either dataset (paired bootstrap of test macro-F1 includes 0 for every pair; McNemar never agrees on all 3 seeds), so the simplest and cheapest strategy is kept. PCGrad, the rule's choice on neu-esc by +0.004 validation macro-F1, costs 7.5x the training time.",
+        "note": "manual choice (rule: sum): No E2 strategy (unc, pcgrad, smartemb, gradnorm) is significantly better than the equal sum on either dataset (paired bootstrap of test macro-F1 includes 0 for every pair; McNemar never agrees on all 3 seeds), so the simplest and cheapest strategy is kept. PCGrad, the rule's choice on neu-esc by +0.004 validation macro-F1, costs 7.5x the training time."
       }
-    }
+    },
+    "loss_tag": "sum"
   }
 }

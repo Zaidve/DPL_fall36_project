@@ -91,7 +91,8 @@ def cmd_select(args):
         raise SystemExit('select needs --stage backbone|loss|imbalance (or --explain)')
     dirs = [Path(d) for d in (args.models or [models_dir()])]
     try:
-        selection = SEL.write_selection(args.stage, dirs, allow_partial=args.allow_partial, force=args.force)
+        selection = SEL.write_selection(args.stage, dirs, allow_partial=args.allow_partial, force=args.force,
+                                        choose=args.choose, reason=args.reason)
     except SEL.SelectionError as e:
         print(e)
         return None
@@ -187,6 +188,8 @@ def main(argv=None):
     p.add_argument('--allow-partial', action='store_true', help='allow candidates with fewer than 3 seeds')
     p.add_argument('--force', action='store_true', help='re-select a written stage (drops later stages)')
     p.add_argument('--explain', action='store_true', help='print the current choices and their provenance')
+    p.add_argument('--choose', help='manual choice for every dataset instead of the rule (needs --reason)')
+    p.add_argument('--reason', help='why the manual choice was made (stored in selection.json)')
     p.add_argument('--models', nargs='+')
     for name, text in (('significance', 'McNemar per seed + paired bootstrap for the standard pairs'),
                        ('tables', 'all result tables (CSV + Markdown)'), ('figures', 'all figures'),
