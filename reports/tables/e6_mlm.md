@@ -1,0 +1,4 @@
+| dataset | model | sentiment accuracy | sentiment macro_f1 | topic accuracy | topic macro_f1 |
+|---|---|---:|---:|---:|---:|
+| neu-esc | final | 82.25 ± 0.44 | 76.34 ± 0.84 | 77.94 ± 0.70 | 62.09 ± 0.97 |
+| uit-vsfc | final | 93.75 ± 0.13 | 81.88 ± 1.11 | 89.44 ± 0.65 | 80.47 ± 0.78 |

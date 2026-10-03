@@ -1,0 +1,5 @@
+﻿dataset,heads,Cramér's V,linear sentiment,task-aware sentiment,Δ sentiment,linear topic,task-aware topic,Δ topic
+neu-esc,"both, sum",0.177,76.20 ± 0.23,76.34 ± 0.84,+0.14,61.95 ± 0.31,62.09 ± 0.97,+0.15
+neu-esc,"both, final (sum)",0.177,76.20 ± 0.23,76.34 ± 0.84,+0.14,61.95 ± 0.31,62.09 ± 0.97,+0.15
+uit-vsfc,"both, sum",0.352,82.08 ± 2.04,81.88 ± 1.11,-0.20,79.61 ± 0.82,80.47 ± 0.78,+0.86
+uit-vsfc,"both, final (sum)",0.352,82.08 ± 2.04,81.88 ± 1.11,-0.20,79.61 ± 0.82,80.47 ± 0.78,+0.86
