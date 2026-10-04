@@ -525,7 +525,10 @@ def test_rq_tables_and_significance_pairs():
             assert (Path(os.environ['DPL_OUT_DIR']) / 'tables' / f'{name}.md').is_file()
         pairs = SIG.standard_pairs(ctx['selection'], set(ctx['agg']['config']), ctx['agg'])
         by_rq = pd.Series([p[0] for p in pairs]).value_counts().to_dict()
-        assert by_rq == {'RQ1': 12, 'RQ2': 12, 'RQ3': 8, 'RQ4': 4, 'Final': 4}
+        # RQ5: 2 datasets x 3 fractions x 2 tasks x (single task vs MTL, single task vs final model)
+        assert by_rq == {'RQ1': 12, 'RQ2': 12, 'RQ3': 8, 'RQ4': 4, 'Final': 4, 'RQ5': 24}
+        assert ('RQ5', 'neu-esc|visobert|st_topic|sum-frac0.1', 'neu-esc|visobert|mtlaware|unc-focal-frac0.1',
+                ('topic',)) in pairs
         final = [p for p in pairs if p[0] == 'Final' and p[1].startswith('neu-esc')]
         assert {p[1] for p in final} == {'neu-esc|visobert|st_sentiment|focal', 'neu-esc|visobert|st_topic|focal'}
 

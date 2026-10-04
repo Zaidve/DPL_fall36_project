@@ -178,7 +178,16 @@ def standard_pairs(selection, available, agg=None):
             add('RQ3', f'{ds}|{bb}|st_topic|focal', f'{ds}|{bb}|mtl|{loss}-focal', ['topic'])
         add('RQ4', f'{ds}|{bb}|mtl|sum', f'{ds}|{bb}|mtlaware|sum', both)
         final = sel.get('final_tag')
-        if final:
+        # RQ5: single task vs MTL (and vs the final model) at every reduced train fraction
+        fractions = sorted({c.rsplit('-frac', 1)[1] for c in available
+                            if c.startswith(f'{ds}|{bb}|') and '-frac' in c}, key=float)
+        for frac in fractions:
+            for task in both:
+                st = f'{ds}|{bb}|st_{task}|sum-frac{frac}'
+                add('RQ5', st, f'{ds}|{bb}|mtl|sum-frac{frac}', [task])
+                if final:
+                    add('RQ5', st, f'{ds}|{bb}|mtlaware|{final}-frac{frac}', [task])
+        if final and final != 'sum':
             add('RQ4', f'{ds}|{bb}|mtl|{final}', f'{ds}|{bb}|mtlaware|{final}', both)
             if agg is not None:
                 for task in both:
