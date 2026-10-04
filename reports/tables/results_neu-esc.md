@@ -13,10 +13,13 @@
 | Prior work (reported) | Claude 4 few-shot (best LLM) | 77.84 | 70.89 | 75.95 | 42.31 | 32.73 | 44.83 |
 | Our reproduction | Single task XLM-R | 81.75 ± 0.28 | 76.02 ± 0.60 | 81.40 ± 0.36 | 77.74 ± 0.28 | 62.27 ± 0.60 | 77.83 ± 0.25 |
 | Our reproduction | 2-task XLM-R | 82.09 ± 0.48 | 76.73 ± 0.36 | 81.93 ± 0.32 | 77.57 ± 0.26 | 61.32 ± 0.57 | 77.51 ± 0.18 |
+| Our reproduction | 2-task + SMART (reference) XLM-R | 83.01 ± 0.35 | 77.58 ± 0.54 | 82.64 ± 0.27 | 79.06 ± 0.15 | 62.52 ± 0.26† | 78.62 ± 0.19 |
 | Our reproduction | Single task ViSoBERT | 82.15 ± 0.35 | 76.09 ± 0.20 | 81.95 ± 0.10 | 78.12 ± 0.61 | 61.02 ± 0.61 | 77.72 ± 0.14 |
 | Our reproduction | 2-task ViSoBERT | 82.17 ± 0.37 | 76.20 ± 0.23 | 82.02 ± 0.23 | 78.15 ± 0.26 | 61.95 ± 0.31 | 77.83 ± 0.21 |
+| Our reproduction | 2-task + SMART (reference) ViSoBERT | 83.21 ± 0.22 | 76.53 ± 0.25† | 82.66 ± 0.09 | 79.24 ± 0.44 | 62.13 ± 0.25† | 78.42 ± 0.46 |
 | Our reproduction | Single task PhoBERT | 81.80 ± 0.62 | 76.26 ± 0.35 | 81.65 ± 0.45 | 77.99 ± 0.64 | 61.73 ± 0.43 | 77.90 ± 0.47 |
 | Our reproduction | 2-task PhoBERT | 81.93 ± 0.39 | 76.31 ± 0.27 | 81.92 ± 0.26 | 78.03 ± 0.41 | 61.41 ± 0.34 | 77.77 ± 0.19 |
+| Our reproduction | 2-task + SMART (reference) PhoBERT | 82.87 ± 0.48 | 77.29 ± 0.33† | 82.63 ± 0.38 | 79.26 ± 0.18 | 63.04 ± 0.60 | 78.85 ± 0.05 |
 | Ours (ViSoBERT) | MTL + SMART (embeddings) | 82.53 ± 0.38 | 76.52 ± 0.18 | 82.36 ± 0.22 | 78.51 ± 0.07 | 61.95 ± 0.48 | 78.12 ± 0.09 |
 | Ours (ViSoBERT) | MTL + uncertainty | 82.39 ± 0.17 | 75.84 ± 0.63 | 82.04 ± 0.10 | 77.84 ± 0.01 | 61.81 ± 0.26 | 77.71 ± 0.05 |
 | Ours (ViSoBERT) | MTL + PCGrad | 82.49 ± 0.02 | 76.17 ± 0.61 | 82.19 ± 0.19 | 78.26 ± 0.24 | 61.93 ± 0.60 | 78.00 ± 0.29 |

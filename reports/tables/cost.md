@@ -1,11 +1,13 @@
 | dataset | backbone | mode | strategy | runs | params_M | time_per_epoch_s | peak_gpu_mb |
 |---|---|---|---|---:|---:|---:|---:|
+| neu-esc | phobert | mtl | smartref | 3 | 134.4 | 291.7 | 4732.0 |
 | neu-esc | phobert | mtl | sum | 3 | 134.4 | 119.3 | 2765.0 |
 | neu-esc | phobert | st_sentiment | sum | 3 | 134.4 | 119.1 | 2766.0 |
 | neu-esc | phobert | st_topic | sum | 3 | 134.4 | 119.2 | 2765.0 |
 | neu-esc | visobert | mtl | gradnorm | 3 | 97.0 | 433.9 | 3070.0 |
 | neu-esc | visobert | mtl | pcgrad | 3 | 97.0 | 861.8 | 3765.0 |
 | neu-esc | visobert | mtl | smartemb | 3 | 97.0 | 267.0 | 3760.0 |
+| neu-esc | visobert | mtl | smartref | 3 | 97.0 | 315.2 | 4864.0 |
 | neu-esc | visobert | mtl | sum | 3 | 97.0 | 115.7 | 2542.0 |
 | neu-esc | visobert | mtl | sum+focal | 3 | 97.0 | 117.3 | 2542.0 |
 | neu-esc | visobert | mtl | sum+frac0.1 | 3 | 97.0 | 15.5 | 2537.0 |
@@ -29,12 +31,14 @@
 | neu-esc | visobert | st_topic | sum+frac0.25 | 3 | 97.0 | 32.0 | 2531.0 |
 | neu-esc | visobert | st_topic | sum+frac0.5 | 3 | 97.0 | 59.9 | 2532.0 |
 | neu-esc | visobert | st_topic | sum+wce | 3 | 97.0 | 116.8 | 2542.0 |
+| neu-esc | xlmr | mtl | smartref | 3 | 277.5 | 390.4 | 6929.0 |
 | neu-esc | xlmr | mtl | sum | 3 | 277.5 | 174.6 | 5351.0 |
 | neu-esc | xlmr | st_sentiment | sum | 3 | 277.5 | 174.1 | 5350.0 |
 | neu-esc | xlmr | st_topic | sum | 3 | 277.5 | 174.3 | 5352.0 |
 | uit-vsfc | phobert | mtl | gradnorm | 3 | 134.4 | 81.1 | 2620.0 |
 | uit-vsfc | phobert | mtl | pcgrad | 3 | 134.4 | 162.2 | 3763.0 |
 | uit-vsfc | phobert | mtl | smartemb | 3 | 134.4 | 64.6 | 2621.0 |
+| uit-vsfc | phobert | mtl | smartref | 3 | 134.4 | 76.7 | 2962.0 |
 | uit-vsfc | phobert | mtl | sum | 3 | 134.4 | 39.2 | 2621.0 |
 | uit-vsfc | phobert | mtl | sum+focal | 3 | 134.4 | 39.1 | 2620.0 |
 | uit-vsfc | phobert | mtl | sum+frac0.1 | 3 | 134.4 | 5.4 | 2620.0 |
@@ -58,9 +62,11 @@
 | uit-vsfc | phobert | st_topic | sum+frac0.25 | 3 | 134.4 | 10.5 | 2620.0 |
 | uit-vsfc | phobert | st_topic | sum+frac0.5 | 3 | 134.4 | 19.8 | 2619.0 |
 | uit-vsfc | phobert | st_topic | sum+wce | 3 | 134.4 | 38.6 | 2620.0 |
+| uit-vsfc | visobert | mtl | smartref | 3 | 97.0 | 83.5 | 3151.0 |
 | uit-vsfc | visobert | mtl | sum | 3 | 97.0 | 37.1 | 1953.0 |
 | uit-vsfc | visobert | st_sentiment | sum | 3 | 97.0 | 36.8 | 1953.0 |
 | uit-vsfc | visobert | st_topic | sum | 3 | 97.0 | 36.7 | 1953.0 |
+| uit-vsfc | xlmr | mtl | smartref | 3 | 277.5 | 122.1 | 5657.0 |
 | uit-vsfc | xlmr | mtl | sum | 3 | 277.5 | 66.8 | 5335.0 |
 | uit-vsfc | xlmr | st_sentiment | sum | 3 | 277.5 | 66.2 | 5335.0 |
 | uit-vsfc | xlmr | st_topic | sum | 3 | 277.5 | 66.3 | 5335.0 |
