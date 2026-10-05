@@ -1,0 +1,18 @@
+# E8 Task-aware heads + reference SMART (follow-up to E1b and E4) - priority: Could
+# E1b: the reference "SMART" (noise on token ids) is the only loss option with a gain that is significant on all
+# 3 seeds, on NEU-ESC, largest on PhoBERT. E4: task-aware heads gave one suggestive gain (UIT-VSFC topic).
+# Do the two add up? Compare with mtl/sum (E1), mtl/smartref (E1b) and mtlaware/sum (E4, and the baseline below).
+#   mtlaware/smartref  NEU-ESC  x {visobert, phobert}   6 runs
+#   mtlaware/smartref  UIT-VSFC x phobert               3 runs
+#   mtlaware/sum       NEU-ESC  x phobert               3 runs (baseline; E4 has it only for visobert)
+# = 12 runs. Does not use or change selection.json: smartref is not a selected setting (see the report).
+extends: configs/default.yaml
+experiment: e8_aware_smartref
+rq: RQ4
+datasets: [neu-esc, uit-vsfc]
+backbones: [visobert, phobert]
+seeds: [42, 123, 2026]
+grid:
+  - {mode: mtlaware, tag: smartref, datasets: [neu-esc]}
+  - {mode: mtlaware, tag: smartref, datasets: [uit-vsfc], backbones: [phobert]}
+  - {mode: mtlaware, tag: sum,      datasets: [neu-esc],  backbones: [phobert]}

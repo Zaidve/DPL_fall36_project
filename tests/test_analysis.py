@@ -63,18 +63,18 @@ def small_matrix(run_ids, **extra):
 def test_build_matrix_shipped_configs():
     with workspace() as tmp:
         matrix = S.build_matrix()
-        assert len(matrix) == 234 and matrix['run_id'].is_unique
+        assert len(matrix) == 246 and matrix['run_id'].is_unique
         assert (tmp / 'reports' / 'tables' / 'run_matrix.csv').is_file()
         assert set(matrix['priority']) == {'Must', 'Should', 'Could'}
         e3 = matrix[matrix['experiment'] == 'e3_imbalance']
         assert (e3[e3['tag'].str.contains('wce')]['priority'] == 'Should').all()
         assert (e3[e3['tag'].str.contains('focal')]['priority'] == 'Must').all()
         assert matrix['keep_checkpoint'].sum() == 42
-        assert matrix['placeholder'].sum() == 234 - 54 - 18                     # only E1 / E1b are concrete
+        assert matrix['placeholder'].sum() == 246 - 54 - 18 - 12                # only E1 / E1b / E8 are concrete
         save_json({ds: {'backbone': 'xlmr', 'loss_tag': 'unc', 'imbalance_tag': 'focal', 'final_tag': 'unc-focal'}
                    for ds in ('neu-esc', 'uit-vsfc')}, tmp / 'reports' / 'tables' / 'selection.json')
         resolved = S.build_matrix(save=False)
-        assert len(resolved) == 234 and resolved['placeholder'].sum() == 0
+        assert len(resolved) == 246 and resolved['placeholder'].sum() == 0
         assert 'neu-esc__xlmr__mtlaware__seed42__unc-focal' in set(resolved['run_id'])
 
 
@@ -220,7 +220,7 @@ def test_cli_commands():
         root = tmp / 'models'
         make_run(root, 'uit-vsfc', 'xlmr', 'mtl', 'sum', 42, keep=True)
         matrix = A.main(['matrix'])
-        assert len(matrix) == 234
+        assert len(matrix) == 246
         status = A.main(['status', '--models', str(root)])
         assert (status['status'] == 'done').sum() == 1
         assert (tmp / 'reports' / 'tables' / 'run_status.csv').is_file()
@@ -468,7 +468,7 @@ _FULL = {}
 
 @contextmanager
 def full_matrix():
-    """ All 234 fake runs + selection.json + the real eda_summary.json, built once per test session. """
+    """ All 246 fake runs + selection.json + the real eda_summary.json, built once per test session. """
     import shutil
     from fixtures.fake_runs import make_full_matrix
     from utils.common import PROJECT_ROOT

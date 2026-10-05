@@ -80,7 +80,7 @@ def make_run(root, dataset, backbone, mode, tag, seed, val=0.70, test=0.68, time
 
 def make_full_matrix(root, selection_path=None, seeds=(42, 123, 2026)):
     """
-      Every run of the shipped experiment configs (234) with made-up but ordered scores, plus selection.json:
+      Every run of the shipped experiment configs (246) with made-up but ordered scores, plus selection.json:
       both datasets pick visobert / loss unc / imbalance focal / final unc-focal.
     """
     from trainer import status as S

@@ -246,7 +246,7 @@ def test_placeholder_expansion():
 def test_shipped_experiment_configs_expand():
     """ Every configs/experiment file expands to the run counts of models_spec.md B3. """
     expected = {'e1_baseline': 54, 'e1b_smart_ref': 18, 'e2_loss': 24, 'e3_imbalance': 36, 'e4_task_aware': 12,
-                'e4b_direction': 12, 'e5_low_resource': 72, 'e6_mlm': 6}
+                'e4b_direction': 12, 'e5_low_resource': 72, 'e6_mlm': 6, 'e8_aware_smartref': 12}
     with sandbox() as tmp:
         save_json({ds: {'backbone': 'visobert', 'loss_tag': 'unc', 'imbalance_tag': 'focal', 'final_tag': 'unc-focal'}
                    for ds in ('neu-esc', 'uit-vsfc')}, Path(tmp) / 'reports' / 'tables' / 'selection.json')
@@ -254,6 +254,10 @@ def test_shipped_experiment_configs_expand():
             specs = T.expand_runs(T.load_experiment(f'configs/experiment/{name}.yaml'))
             assert len(specs) == n, (name, len(specs))
             assert all(s.cfg['run']['experiment'] == name for s in specs)
+        # E8 grid entries are limited to some datasets / backbones
+        e8 = {(s.dataset, s.backbone, s.mode, s.tag) for s in specs}
+        assert e8 == {('neu-esc', 'visobert', 'mtlaware', 'smartref'), ('neu-esc', 'phobert', 'mtlaware', 'smartref'),
+                      ('uit-vsfc', 'phobert', 'mtlaware', 'smartref'), ('neu-esc', 'phobert', 'mtlaware', 'sum')}
 
 
 # 4

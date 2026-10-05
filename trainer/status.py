@@ -26,7 +26,7 @@ from utils.config import load_config
 
 EXPERIMENT_PRIORITY = {'e1_baseline': 'Must', 'e1b_smart_ref': 'Should', 'e2_loss': 'Should',
                        'e4_task_aware': 'Must', 'e4b_direction': 'Could', 'e5_low_resource': 'Could',
-                       'e6_mlm': 'Could'}
+                       'e6_mlm': 'Could', 'e8_aware_smartref': 'Could'}
 PRIORITY_ORDER = {'Must': 0, 'Should': 1, 'Could': 2}
 # Time factors vs a plain run when no run of a group has finished yet (spec: SMART x2, PCGrad x2.5).
 GROUP_FACTOR = {'plain': 1.0, 'smart': 2.0, 'pcgrad': 2.5, 'gradnorm': 2.0, 'mlm': 1.5}

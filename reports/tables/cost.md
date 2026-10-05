@@ -16,6 +16,8 @@
 | neu-esc | visobert | mtl | sum+wce | 3 | 97.0 | 117.0 | 2542.0 |
 | neu-esc | visobert | mtl | unc | 3 | 97.0 | 118.2 | 2542.0 |
 | neu-esc | visobert | mtlaware | sum | 3 | 99.4 | 117.8 | 2578.0 |
+| neu-esc | visobert | mtlaware | sum+cross_sent | 3 | 98.2 | 117.7 | 2559.0 |
+| neu-esc | visobert | mtlaware | sum+cross_topic | 3 | 98.2 | 117.8 | 2559.0 |
 | neu-esc | visobert | mtlaware | sum+frac0.1 | 3 | 99.4 | 15.7 | 2574.0 |
 | neu-esc | visobert | mtlaware | sum+frac0.25 | 3 | 99.4 | 32.5 | 2568.0 |
 | neu-esc | visobert | mtlaware | sum+frac0.5 | 3 | 99.4 | 60.9 | 2568.0 |
@@ -47,6 +49,8 @@
 | uit-vsfc | phobert | mtl | sum+wce | 3 | 134.4 | 38.8 | 2620.0 |
 | uit-vsfc | phobert | mtl | unc | 3 | 134.4 | 39.4 | 2620.0 |
 | uit-vsfc | phobert | mtlaware | sum | 3 | 136.8 | 39.6 | 2650.0 |
+| uit-vsfc | phobert | mtlaware | sum+cross_sent | 3 | 135.6 | 39.1 | 2635.0 |
+| uit-vsfc | phobert | mtlaware | sum+cross_topic | 3 | 135.6 | 39.1 | 2635.0 |
 | uit-vsfc | phobert | mtlaware | sum+frac0.1 | 3 | 136.8 | 5.4 | 2653.0 |
 | uit-vsfc | phobert | mtlaware | sum+frac0.25 | 3 | 136.8 | 11.0 | 2650.0 |
 | uit-vsfc | phobert | mtlaware | sum+frac0.5 | 3 | 136.8 | 20.7 | 2652.0 |

@@ -195,6 +195,7 @@ def expand_runs(exp, placeholders=False):
       placeholders=True (for planning, e.g. the run matrix): when selection.json or one of its stages is
       missing, keep `best` / `bestloss` / `bestimb` / `final` in the run id instead of failing; such specs
       have cfg['run']['placeholder'] = True and must not be trained.
+      A grid entry may list `datasets` and / or `backbones` to run only on those (names as in the experiment file).
     """
     selection = {}
     if _needs_selection(exp):
@@ -214,6 +215,8 @@ def expand_runs(exp, placeholders=False):
                     raise KeyError(f'selection.json has no backbone for {ds}')
                 backbone = chosen or 'best'
             for entry in exp['grid']:
+                if ds not in entry.get('datasets', [ds]) or bb not in entry.get('backbones', [bb]):
+                    continue
                 mode, raw_tag = entry['mode'], str(entry['tag'])
                 tag = resolve_tag(raw_tag, selection.get(ds), keep_missing=placeholders)
                 concrete = '-'.join(t for t in tag.split('-') if t not in SELECTION_TOKENS)

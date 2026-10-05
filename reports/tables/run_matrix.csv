@@ -227,3 +227,15 @@ e6_mlm,ablation,Could,neu-esc__visobert__mtlaware__seed2026__sum-mlm,neu-esc,vis
 e6_mlm,ablation,Could,uit-vsfc__phobert__mtlaware__seed42__sum-mlm,uit-vsfc,phobert,mtlaware,sum-mlm,42,False,False
 e6_mlm,ablation,Could,uit-vsfc__phobert__mtlaware__seed123__sum-mlm,uit-vsfc,phobert,mtlaware,sum-mlm,123,False,False
 e6_mlm,ablation,Could,uit-vsfc__phobert__mtlaware__seed2026__sum-mlm,uit-vsfc,phobert,mtlaware,sum-mlm,2026,False,False
+e8_aware_smartref,RQ4,Could,neu-esc__visobert__mtlaware__seed42__smartref,neu-esc,visobert,mtlaware,smartref,42,False,False
+e8_aware_smartref,RQ4,Could,neu-esc__visobert__mtlaware__seed123__smartref,neu-esc,visobert,mtlaware,smartref,123,False,False
+e8_aware_smartref,RQ4,Could,neu-esc__visobert__mtlaware__seed2026__smartref,neu-esc,visobert,mtlaware,smartref,2026,False,False
+e8_aware_smartref,RQ4,Could,neu-esc__phobert__mtlaware__seed42__smartref,neu-esc,phobert,mtlaware,smartref,42,False,False
+e8_aware_smartref,RQ4,Could,neu-esc__phobert__mtlaware__seed123__smartref,neu-esc,phobert,mtlaware,smartref,123,False,False
+e8_aware_smartref,RQ4,Could,neu-esc__phobert__mtlaware__seed2026__smartref,neu-esc,phobert,mtlaware,smartref,2026,False,False
+e8_aware_smartref,RQ4,Could,neu-esc__phobert__mtlaware__seed42__sum,neu-esc,phobert,mtlaware,sum,42,False,False
+e8_aware_smartref,RQ4,Could,neu-esc__phobert__mtlaware__seed123__sum,neu-esc,phobert,mtlaware,sum,123,False,False
+e8_aware_smartref,RQ4,Could,neu-esc__phobert__mtlaware__seed2026__sum,neu-esc,phobert,mtlaware,sum,2026,False,False
+e8_aware_smartref,RQ4,Could,uit-vsfc__phobert__mtlaware__seed42__smartref,uit-vsfc,phobert,mtlaware,smartref,42,False,False
+e8_aware_smartref,RQ4,Could,uit-vsfc__phobert__mtlaware__seed123__smartref,uit-vsfc,phobert,mtlaware,smartref,123,False,False
+e8_aware_smartref,RQ4,Could,uit-vsfc__phobert__mtlaware__seed2026__smartref,uit-vsfc,phobert,mtlaware,smartref,2026,False,False
