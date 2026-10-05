@@ -1,6 +1,8 @@
 ﻿dataset,backbone,mode,strategy,runs,params_M,time_per_epoch_s,peak_gpu_mb
 neu-esc,phobert,mtl,smartref,3,134.4,291.7,4732.0
 neu-esc,phobert,mtl,sum,3,134.4,119.3,2765.0
+neu-esc,phobert,mtlaware,smartref,3,136.8,275.0,4755.0
+neu-esc,phobert,mtlaware,sum,3,136.8,122.7,2802.0
 neu-esc,phobert,st_sentiment,sum,3,134.4,119.1,2766.0
 neu-esc,phobert,st_topic,sum,3,134.4,119.2,2765.0
 neu-esc,visobert,mtl,gradnorm,3,97.0,433.9,3070.0
@@ -14,6 +16,7 @@ neu-esc,visobert,mtl,sum+frac0.25,3,97.0,32.1,2531.0
 neu-esc,visobert,mtl,sum+frac0.5,3,97.0,60.1,2532.0
 neu-esc,visobert,mtl,sum+wce,3,97.0,117.0,2542.0
 neu-esc,visobert,mtl,unc,3,97.0,118.2,2542.0
+neu-esc,visobert,mtlaware,smartref,3,99.4,296.8,4903.0
 neu-esc,visobert,mtlaware,sum,3,99.4,117.8,2578.0
 neu-esc,visobert,mtlaware,sum+cross_sent,3,98.2,117.7,2559.0
 neu-esc,visobert,mtlaware,sum+cross_topic,3,98.2,117.8,2559.0
@@ -47,6 +50,7 @@ uit-vsfc,phobert,mtl,sum+frac0.25,3,134.4,10.7,2620.0
 uit-vsfc,phobert,mtl,sum+frac0.5,3,134.4,20.2,2618.0
 uit-vsfc,phobert,mtl,sum+wce,3,134.4,38.8,2620.0
 uit-vsfc,phobert,mtl,unc,3,134.4,39.4,2620.0
+uit-vsfc,phobert,mtlaware,smartref,3,136.8,73.8,2993.0
 uit-vsfc,phobert,mtlaware,sum,3,136.8,39.6,2650.0
 uit-vsfc,phobert,mtlaware,sum+cross_sent,3,135.6,39.1,2635.0
 uit-vsfc,phobert,mtlaware,sum+cross_topic,3,135.6,39.1,2635.0
