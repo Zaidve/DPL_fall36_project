@@ -1,7 +1,0 @@
-﻿dataset,split,rows,unique_texts,duplicate_rows,duplicate_pct
-neu-esc,train,23048,23048,0,0.0
-neu-esc,val,3305,3305,0,0.0
-neu-esc,test,6613,6613,0,0.0
-uit-vsfc,train,11426,11425,1,0.00875196919306844
-uit-vsfc,val,1583,1583,0,0.0
-uit-vsfc,test,3166,3166,0,0.0

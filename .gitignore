@@ -1,5 +1,14 @@
 __pycache__/
 *.pyc
-reports/cache/
 .ipynb_checkpoints/
 models/
+
+# reports/ holds generated output (tables, figures, result write-ups, the report and proposal files).
+# Two files in it are read by the code and stay in git:
+#   reports/tables/selection.json  the Kaggle runner copies it from the clone (needed from E2 on)
+#   reports/eda_summary.json       trainer/tables.py and trainer/figures.py read it (Cramer's V, minority classes)
+reports/*
+!reports/eda_summary.json
+!reports/tables/
+reports/tables/*
+!reports/tables/selection.json
