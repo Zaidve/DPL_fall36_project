@@ -88,7 +88,7 @@ def cmd_select(args):
     if args.explain:
         return SEL.explain_selection()
     if not args.stage:
-        raise SystemExit('select needs --stage backbone|loss|imbalance (or --explain)')
+        raise SystemExit('select needs --stage backbone|loss|joint|imbalance (or --explain)')
     dirs = [Path(d) for d in (args.models or [models_dir()])]
     try:
         selection = SEL.write_selection(args.stage, dirs, allow_partial=args.allow_partial, force=args.force,
@@ -184,7 +184,8 @@ def main(argv=None):
     p = sub.add_parser('check', help='consistency warnings for finished runs')
     p.add_argument('--models', nargs='+')
     p = sub.add_parser('select', help='write a selection.json stage (validation scores only)')
-    p.add_argument('--stage', choices=['backbone', 'loss', 'imbalance'])
+    p.add_argument('--stage', choices=['backbone', 'loss', 'joint', 'imbalance'],
+                   help='joint = backbone and loss together, instead of the backbone and loss stages')
     p.add_argument('--allow-partial', action='store_true', help='allow candidates with fewer than 3 seeds')
     p.add_argument('--force', action='store_true', help='re-select a written stage (drops later stages)')
     p.add_argument('--explain', action='store_true', help='print the current choices and their provenance')

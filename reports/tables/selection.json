@@ -1,126 +1,48 @@
 {
   "neu-esc": {
-    "backbone": "visobert",
+    "backbone": "phobert",
     "provenance": {
-      "backbone": {
-        "stage": "e1",
+      "joint": {
+        "stage": "e1+e1b+e2",
         "metric": "validation macro_f1_mean",
-        "choice": "visobert",
-        "written": "2026-09-30",
+        "choice": "phobert/smartref",
+        "written": "2026-10-10",
         "scores": {
-          "xlmr": 0.6994861729538151,
-          "visobert": 0.7039494540305701,
-          "phobert": 0.7025215040986548
+          "xlmr/smartref": 0.7127919214949182,
+          "xlmr/sum": 0.6994861729538151,
+          "visobert/gradnorm": 0.7048495015930722,
+          "visobert/pcgrad": 0.7079609798705219,
+          "visobert/smartemb": 0.7057818224640712,
+          "visobert/smartref": 0.7028072459331054,
+          "visobert/sum": 0.7039494540305701,
+          "visobert/unc": 0.7043569396789701,
+          "phobert/smartref": 0.7177227339773727,
+          "phobert/sum": 0.7025215040986548
         },
         "n_seeds": {
-          "xlmr": 3,
-          "visobert": 3,
-          "phobert": 3
+          "xlmr/smartref": 3,
+          "xlmr/sum": 3,
+          "visobert/gradnorm": 3,
+          "visobert/pcgrad": 3,
+          "visobert/smartemb": 3,
+          "visobert/smartref": 3,
+          "visobert/sum": 3,
+          "visobert/unc": 3,
+          "phobert/smartref": 3,
+          "phobert/sum": 3
         },
         "single_task_mean": {
           "xlmr": 0.7033932355307795,
           "visobert": 0.7069223448793711,
           "phobert": 0.7038912257923198
         }
-      },
-      "loss": {
-        "stage": "e1+e2",
-        "metric": "validation macro_f1_mean",
-        "choice": "sum",
-        "written": "2026-10-01",
-        "scores": {
-          "gradnorm": 0.7048495015930722,
-          "pcgrad": 0.7079609798705219,
-          "smartemb": 0.7057818224640712,
-          "sum": 0.7039494540305701,
-          "unc": 0.7043569396789701
-        },
-        "n_seeds": {
-          "gradnorm": 3,
-          "pcgrad": 3,
-          "smartemb": 3,
-          "sum": 3,
-          "unc": 3
-        },
-        "manual": true,
-        "rule_choice": "pcgrad",
-        "reason": "No E2 strategy (unc, pcgrad, smartemb, gradnorm) is significantly better than the equal sum on either dataset (paired bootstrap of test macro-F1 includes 0 for every pair; McNemar never agrees on all 3 seeds), so the simplest and cheapest strategy is kept. PCGrad, the rule's choice on neu-esc by +0.004 validation macro-F1, costs 7.5x the training time.",
-        "note": "manual choice (rule: pcgrad): No E2 strategy (unc, pcgrad, smartemb, gradnorm) is significantly better than the equal sum on either dataset (paired bootstrap of test macro-F1 includes 0 for every pair; McNemar never agrees on all 3 seeds), so the simplest and cheapest strategy is kept. PCGrad, the rule's choice on neu-esc by +0.004 validation macro-F1, costs 7.5x the training time."
-      },
-      "imbalance": {
-        "stage": "e3",
-        "metric": "validation macro_f1_mean",
-        "choice": "none",
-        "written": "2026-10-01",
-        "scores": {
-          "none": 0.7039494540305701,
-          "focal": 0.7023610167348439,
-          "wce": 0.7038454751072584
-        },
-        "n_seeds": {
-          "none": 3,
-          "focal": 3,
-          "wce": 3
-        },
-        "tags": {
-          "none": "sum",
-          "focal": "sum-focal",
-          "wce": "sum-wce"
-        }
       }
     },
-    "loss_tag": "sum",
-    "imbalance_tag": "none",
-    "final_tag": "sum"
+    "loss_tag": "smartref"
   },
   "uit-vsfc": {
     "backbone": "phobert",
     "provenance": {
-      "backbone": {
-        "stage": "e1",
-        "metric": "validation macro_f1_mean",
-        "choice": "phobert",
-        "written": "2026-09-30",
-        "scores": {
-          "xlmr": 0.8315613091296998,
-          "visobert": 0.8175412434705341,
-          "phobert": 0.8394255178925113
-        },
-        "n_seeds": {
-          "xlmr": 3,
-          "visobert": 3,
-          "phobert": 3
-        },
-        "single_task_mean": {
-          "xlmr": 0.8306610563988732,
-          "visobert": 0.8276519859189229,
-          "phobert": 0.8406115397857421
-        }
-      },
-      "loss": {
-        "stage": "e1+e2",
-        "metric": "validation macro_f1_mean",
-        "choice": "sum",
-        "written": "2026-10-01",
-        "scores": {
-          "gradnorm": 0.8383152683600397,
-          "pcgrad": 0.8384002664068894,
-          "smartemb": 0.8382904668165058,
-          "sum": 0.8394255178925113,
-          "unc": 0.8377880392336073
-        },
-        "n_seeds": {
-          "gradnorm": 3,
-          "pcgrad": 3,
-          "smartemb": 3,
-          "sum": 3,
-          "unc": 3
-        },
-        "manual": true,
-        "rule_choice": "sum",
-        "reason": "No E2 strategy (unc, pcgrad, smartemb, gradnorm) is significantly better than the equal sum on either dataset (paired bootstrap of test macro-F1 includes 0 for every pair; McNemar never agrees on all 3 seeds), so the simplest and cheapest strategy is kept. PCGrad, the rule's choice on neu-esc by +0.004 validation macro-F1, costs 7.5x the training time.",
-        "note": "manual choice (rule: sum): No E2 strategy (unc, pcgrad, smartemb, gradnorm) is significantly better than the equal sum on either dataset (paired bootstrap of test macro-F1 includes 0 for every pair; McNemar never agrees on all 3 seeds), so the simplest and cheapest strategy is kept. PCGrad, the rule's choice on neu-esc by +0.004 validation macro-F1, costs 7.5x the training time."
-      },
       "imbalance": {
         "stage": "e3",
         "metric": "validation macro_f1_mean",
@@ -140,6 +62,41 @@
           "none": "sum",
           "focal": "sum-focal",
           "wce": "sum-wce"
+        }
+      },
+      "joint": {
+        "stage": "e1+e1b+e2",
+        "metric": "validation macro_f1_mean",
+        "choice": "phobert/sum",
+        "written": "2026-10-10",
+        "scores": {
+          "xlmr/smartref": 0.8298214027213575,
+          "xlmr/sum": 0.8315613091296998,
+          "visobert/smartref": 0.8246627459910071,
+          "visobert/sum": 0.8175412434705341,
+          "phobert/gradnorm": 0.8383152683600397,
+          "phobert/pcgrad": 0.8384002664068894,
+          "phobert/smartemb": 0.8382904668165058,
+          "phobert/smartref": 0.8348348711532859,
+          "phobert/sum": 0.8394255178925113,
+          "phobert/unc": 0.8377880392336073
+        },
+        "n_seeds": {
+          "xlmr/smartref": 3,
+          "xlmr/sum": 3,
+          "visobert/smartref": 3,
+          "visobert/sum": 3,
+          "phobert/gradnorm": 3,
+          "phobert/pcgrad": 3,
+          "phobert/smartemb": 3,
+          "phobert/smartref": 3,
+          "phobert/sum": 3,
+          "phobert/unc": 3
+        },
+        "single_task_mean": {
+          "xlmr": 0.8306610563988732,
+          "visobert": 0.8276519859189229,
+          "phobert": 0.8406115397857421
         }
       }
     },

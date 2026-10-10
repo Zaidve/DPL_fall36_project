@@ -379,6 +379,74 @@ def test_manual_choice_needs_reason_and_candidate():
         assert sel['neu-esc']['provenance']['imbalance']['rule_choice'] == 'focal'
 
 
+def test_joint_selection_stage():
+    import trainer.train as T
+    from trainer import selection as SEL
+    with workspace() as tmp:
+        root = tmp / 'models'
+        # stage by stage: visobert wins E1 and pcgrad wins E2 on it; over all pairs phobert + smartref is best
+        e1_runs(root, {'xlmr': (0.60, 0.9), 'visobert': (0.70, 0.9), 'phobert': (0.69, 0.5)})
+        mtl_runs(root, 'visobert', 'pcgrad', 0.72)
+        mtl_runs(root, 'visobert', 'pcgrad-focal', 0.60)
+        mtl_runs(root, 'visobert', 'smartref', 0.66, datasets=('neu-esc',))
+        mtl_runs(root, 'phobert', 'smartref', 0.75, datasets=('neu-esc',), seeds=(42,))
+        for stage in ('backbone', 'loss', 'imbalance'):
+            sel = SEL.write_selection(stage, [root])
+        assert (sel['neu-esc']['backbone'], sel['neu-esc']['final_tag']) == ('visobert', 'pcgrad')
+
+        def refused(stage, text, **kw):
+            try:
+                SEL.write_selection(stage, [root], **kw)
+                raise AssertionError(f'stage {stage} not refused')
+            except SEL.SelectionError as e:
+                assert text in str(e), str(e)
+
+        refused('joint', 'already written')
+        refused('joint', 'neu-esc__phobert__mtl__seed123__smartref', force=True)     # a started pair needs 3 seeds
+        mtl_runs(root, 'phobert', 'smartref', 0.75, datasets=('neu-esc',), seeds=(123, 2026))
+        sel = SEL.write_selection('joint', [root], force=True, today='2026-10-10')
+        neu, uit = sel['neu-esc'], sel['uit-vsfc']
+        assert (neu['backbone'], neu['loss_tag']) == ('phobert', 'smartref')
+        assert 'final_tag' not in neu and set(neu['provenance']) == {'joint'}       # later stage dropped
+        prov = neu['provenance']['joint']
+        assert prov['choice'] == 'phobert/smartref' and prov['metric'] == 'validation macro_f1_mean'
+        assert set(prov['scores']) == {'xlmr/sum', 'visobert/sum', 'visobert/pcgrad', 'visobert/smartref',
+                                       'phobert/sum', 'phobert/smartref'}
+        # uit-vsfc keeps its backbone and loss tag, so its imbalance stage stays
+        assert (uit['backbone'], uit['loss_tag'], uit['final_tag']) == ('visobert', 'pcgrad', 'pcgrad')
+        assert set(uit['provenance']) == {'joint', 'imbalance'}
+        assert set(SEL.explain_selection()['stage']) == {'joint', 'imbalance'}
+        # the trainer resolves `best` / `bestloss` from the joint choice
+        specs = T.expand_runs(T.load_experiment('configs/experiment/e3_imbalance.yaml'), placeholders=True)
+        assert 'neu-esc__phobert__mtl__seed42__smartref-focal' in {s.run_id for s in specs}
+
+        refused('imbalance', 'no E3 mtl run with focal / wce finished for neu-esc', force=True)
+        mtl_runs(root, 'phobert', 'smartref-focal', 0.60, datasets=('neu-esc',))
+        sel = SEL.write_selection('imbalance', [root], force=True)
+        assert sel['neu-esc']['final_tag'] == 'smartref' and sel['uit-vsfc']['final_tag'] == 'pcgrad'
+
+        # a manual joint choice is a `backbone/tag` pair; the stage-by-stage route drops the joint provenance
+        sel = SEL.write_selection('joint', [root], force=True, choose='visobert/sum', reason='simplest')
+        assert (sel['neu-esc']['backbone'], sel['neu-esc']['loss_tag']) == ('visobert', 'sum')
+        assert sel['neu-esc']['provenance']['joint']['rule_choice'] == 'phobert/smartref'
+        sel = SEL.write_selection('backbone', [root], force=True)
+        assert set(sel['neu-esc']['provenance']) == {'backbone'}
+
+    with workspace() as tmp:
+        # within 0.001 of the best pair: a `sum` pair wins, then the better single-task mean
+        e1_runs(tmp / 'models', {'xlmr': (0.7000, 0.5), 'phobert': (0.7005, 0.5)}, datasets=('neu-esc',),
+                st={'xlmr': 0.66, 'phobert': 0.62})
+        mtl_runs(tmp / 'models', 'phobert', 'smartref', 0.7008, datasets=('neu-esc',))
+        agg, _ = SEL.validation_scores([tmp / 'models'])
+        assert SEL.select_joint(agg, 'neu-esc', tags=['smartref'])[0] == 'xlmr/sum'
+        runs, _ = load_runs([tmp / 'models'])
+        try:
+            SEL.select_joint(aggregate_seeds(runs), 'neu-esc')
+            raise AssertionError('test rows were accepted')
+        except AssertionError as e:
+            assert 'validation' in str(e)
+
+
 def test_select_cli_and_explain():
     with workspace() as tmp:
         root = tmp / 'models'

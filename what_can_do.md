@@ -28,7 +28,7 @@ command and result. `NEXT_STEPS.md` is from before training started and is out o
 | Kaggle quota | About 30 GPU-hours per week. A session stops at 12 hours. |
 | After a session | The user downloads `results_<experiment>.zip` (runs without checkpoints + tables). Then locally: `python -m trainer.analysis merge --from <zip>/models --to models --apply`, then `status`, `check`, `significance`, `tables`, `figures`. |
 | Local machine | Windows, RTX 5050 8 GB, `.venv` with torch 2.11.0+cu128. **Keep this environment unchanged.** Used for tests, analysis and quick checks, not for real training. |
-| Tests | `for t in tests/test_*.py; do .venv/Scripts/python.exe $t | tail -1; done` (119 tests, CPU, no downloads). |
+| Tests | `for t in tests/test_*.py; do .venv/Scripts/python.exe $t | tail -1; done` (120 tests, CPU, no downloads). |
 | Commits | The user commits and pushes. Give the commands; do not commit or push unless asked. |
 | Selection | Always on validation scores, never on test (`trainer/selection.py`). A manual choice needs `--choose TAG --reason TEXT`. |
 
@@ -70,6 +70,16 @@ sentiment and 63.04 topic macro-F1.
 | E7 cross-dataset | Evaluate each sentiment model on the other dataset (3 shared labels); no training | short | `EXPERIMENT = 'e7_cross_dataset'`. Needs every kept checkpoint in one `models/`. They are in three Kaggle outputs (session 1: NEU-ESC PhoBERT; session 4: the rest of E1; the E4 session). Kaggle attaches one version of a notebook's output at a time, so turn the older versions' `models` folders into Kaggle Datasets, attach all, and set `RESUME_FROM` to the list of paths. |
 
 ### 4.2 Larger routes that change the main results
+
+**Route C2-a is in progress (started 2026-10-10).** Done: `select --stage joint` (code + test), the new
+`selection.json` (NEU-ESC = PhoBERT + `smartref`, imbalance stage open; UIT-VSFC unchanged), and a copy of the
+old tables and figures in `reports/sequential_selection/`. Next, all with `ONLY = 'neu-esc__'`:
+`e3_imbalance` (18 runs, about 8 h) and `e4b_direction` (6 runs, about 1.8 h); merge; then
+`python -m trainer.analysis select --stage imbalance --force`, commit and push `selection.json`; then
+`e5_low_resource` (36 runs, about 3.4 h); then `analysis all` and the rewrite of the report. E4 needs no new
+runs if the imbalance choice is "none" (E8 has `mtlaware/sum` and `mtlaware/smartref` on PhoBERT). The final
+model stays task-aware heads (validation 0.7116, below linear heads + `smartref` at 0.7177); Route C2-b, selecting
+the heads too, is planned after C2-a. E2 was not rerun on PhoBERT (12 runs, about 7.4 h, optional).
 
 | Route | What | Cost | Notes |
 |---|---|---|---|

@@ -69,7 +69,7 @@ DPL_project/
 │   ├── DPL_Proposal_MTL_IEEE_EN.docx                                       proposal
 │   └── presentation_script.md                                              speaking script (EN + VI)
 ├── models/                  run outputs, one folder per run (gitignored; 234 finished runs, no checkpoints locally)
-├── tests/                   9 test files, 119 tests (+ fixtures: legacy model, fake run folders / full fake matrix)
+├── tests/                   9 test files, 120 tests (+ fixtures: legacy model, fake run folders / full fake matrix)
 ├── .venv/                   Python 3.11.0 (not in git)
 └── PROJECT_OVERVIEW.md      this file
 ```
@@ -220,6 +220,7 @@ Hours are training time on a Kaggle T4. With the current selection the matrix ha
 | `merge --from DIR ... --to DIR [--apply]` | copies finished runs from several session outputs into one `models/`; never overwrites a finished run, reports conflicts |
 | `check [--models DIR ...]` | config drift between seeds, library versions, best epoch 1, skipped steps, prediction counts, missing kept checkpoints |
 | `select --stage backbone\|loss\|imbalance [--allow-partial] [--force] [--choose TAG --reason TEXT]` | writes one stage of `reports/tables/selection.json` (below); `--choose` records a manual choice among the candidates, with its reason, the rule's own choice and all scores |
+| `select --stage joint [--force] [--choose BACKBONE/TAG --reason TEXT]` | backbone and loss chosen together over every finished `mtl` pair (E1 `sum`, E2 tags, E1b `smartref`), instead of the backbone and loss stages; a dataset whose backbone and loss do not change keeps its imbalance stage |
 | `select --explain` | current choices with their validation scores, seed counts and date |
 | `significance [--n-boot N]` | standard pairs (RQ1 ST vs MTL per backbone; RQ2 strategies vs sum, smartref vs smartemb; RQ3 imbalance; RQ4 linear vs task-aware; RQ5 single task vs MTL and vs the final model at each train fraction; final vs best single task): McNemar per seed + paired bootstrap of Δ macro-F1 → `significance.csv` |
 | `tables` | `results_<dataset>` (prior work for NEU-ESC / our reproduction / ours, final model in bold), `rq1_st_vs_mtl`, `rq2_loss`, `rq3_imbalance` + `rq3_per_class`, `rq4_task_aware` (with Cramér's V), `rq5_low_resource`, `cost`, `e6_mlm` |
@@ -342,7 +343,7 @@ Not installed: seaborn, tabulate, pytest (tests run with plain `python tests/<fi
 
 ---
 
-## 7. Tests (119, all passing)
+## 7. Tests (120, all passing)
 
 | File | Tests | Covers |
 |---|---|---|
@@ -354,13 +355,20 @@ Not installed: seaborn, tabulate, pytest (tests run with plain `python tests/<fi
 | `test_common_config.py` | 12 | paths, seeds, config `extends`, overrides |
 | `test_evaluate_runs.py` | 10 | metrics (argument order), predictions, run ids, resume, checkpoints |
 | `test_train.py` | 16 | the full trainer on CPU: every strategy, resume, early stop, errors, placeholders, shipped configs (E1–E8), time budget, selection `sum` / `none` |
-| `test_analysis.py` | 23 | run matrix, status, merge, results + seeds, session plan, consistency, selection stages (validation only, seeds, order, force, ties, manual choice), McNemar / bootstrap, RQ5 pairs, tables + Markdown, every figure, E7 (3-label mapping, cross-eval + cache), CLI |
+| `test_analysis.py` | 24 | run matrix, status, merge, results + seeds, session plan, consistency, selection stages (validation only, seeds, order, force, ties, manual choice, joint backbone + loss), McNemar / bootstrap, RQ5 pairs, tables + Markdown, every figure, E7 (3-label mapping, cross-eval + cache), CLI |
 
 Run one: `.venv/Scripts/python.exe tests/test_train.py` (CPU only, no downloads, ~20 s).
 
 ---
 
 ## 8. Open items
+
+0. **Route C2-a in progress (started 2026-10-10):** `selection.json` now holds the joint choice. NEU-ESC =
+   PhoBERT + `smartref` (validation 0.7177), imbalance stage not written yet; UIT-VSFC is unchanged. The
+   results in section 4 and the written reports describe the earlier stage-by-stage selection (NEU-ESC =
+   ViSoBERT + `sum`); their tables and figures are kept in `reports/sequential_selection/`. Still to run on
+   Kaggle for NEU-ESC on PhoBERT: E3 (18 runs), E4b (6), then `select --stage imbalance --force`, then E5 (36).
+   See [what_can_do.md](what_can_do.md) section 4.2.
 
 1. **Not run:** E6 (MLM ablation, 6 runs, about 1.8 h) and E7 (cross-dataset evaluation). E7 needs the kept
    checkpoints of E1 and E4 in one `models/` folder; they are in three separate Kaggle outputs, so the older
