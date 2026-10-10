@@ -36,9 +36,32 @@
           "visobert": 0.7069223448793711,
           "phobert": 0.7038912257923198
         }
+      },
+      "imbalance": {
+        "stage": "e3",
+        "metric": "validation macro_f1_mean",
+        "choice": "none",
+        "written": "2026-10-10",
+        "scores": {
+          "none": 0.7177227339773727,
+          "focal": 0.7126489042520116,
+          "wce": 0.6933138143963706
+        },
+        "n_seeds": {
+          "none": 3,
+          "focal": 3,
+          "wce": 3
+        },
+        "tags": {
+          "none": "smartref",
+          "focal": "smartref-focal",
+          "wce": "smartref-wce"
+        }
       }
     },
-    "loss_tag": "smartref"
+    "loss_tag": "smartref",
+    "imbalance_tag": "none",
+    "final_tag": "smartref"
   },
   "uit-vsfc": {
     "backbone": "phobert",
@@ -47,7 +70,7 @@
         "stage": "e3",
         "metric": "validation macro_f1_mean",
         "choice": "none",
-        "written": "2026-10-01",
+        "written": "2026-10-10",
         "scores": {
           "none": 0.8394255178925113,
           "focal": 0.837683610423484,
