@@ -71,15 +71,14 @@ sentiment and 63.04 topic macro-F1.
 
 ### 4.2 Larger routes that change the main results
 
-**Route C2-a is in progress (started 2026-10-10).** Done: `select --stage joint` (code + test), the new
-`selection.json` (NEU-ESC = PhoBERT + `smartref`, imbalance stage open; UIT-VSFC unchanged), and a copy of the
-old tables and figures in `reports/sequential_selection/`. Next, all with `ONLY = 'neu-esc__'`:
-`e3_imbalance` (18 runs, about 8 h) and `e4b_direction` (6 runs, about 1.8 h); merge; then
-`python -m trainer.analysis select --stage imbalance --force`, commit and push `selection.json`; then
-`e5_low_resource` (36 runs, about 3.4 h); then `analysis all` and the rewrite of the report. E4 needs no new
-runs if the imbalance choice is "none" (E8 has `mtlaware/sum` and `mtlaware/smartref` on PhoBERT). The final
-model stays task-aware heads (validation 0.7116, below linear heads + `smartref` at 0.7177); Route C2-b, selecting
-the heads too, is planned after C2-a. E2 was not rerun on PhoBERT (12 runs, about 7.4 h, optional).
+**Route C2-a: runs finished 2026-10-11; the documents are not rewritten yet.** Done: `select --stage joint`
+(code + test), `selection.json` (NEU-ESC = PhoBERT + `smartref`, imbalance none, final tag `smartref`; UIT-VSFC
+unchanged), and 60 new NEU-ESC runs on PhoBERT (E3 18, E5 36, E4b 6; 294 finished runs in total, none failed).
+`reports/tables/` and `reports/figures/` are rebuilt; the old ones are in `reports/sequential_selection/`.
+Final NEU-ESC model `mtlaware/smartref`: test 77.29 sentiment, 62.23 topic (linear heads + `smartref`: 77.29 /
+63.04). Left to do: rewrite the report, proposal and slides for the new selection; optionally rerun E2 on
+PhoBERT (`e2_loss`, `ONLY = 'neu-esc__'`, 12 runs, about 6.5 h) for a complete RQ2 table; then Route C2-b
+(select the heads on validation too; no new training).
 
 | Route | What | Cost | Notes |
 |---|---|---|---|

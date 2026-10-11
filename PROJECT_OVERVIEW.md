@@ -363,13 +363,14 @@ Run one: `.venv/Scripts/python.exe tests/test_train.py` (CPU only, no downloads,
 
 ## 8. Open items
 
-0. **Route C2-a in progress (started 2026-10-10):** `selection.json` now holds the joint choice. NEU-ESC =
-   PhoBERT + `smartref` (validation 0.7177), imbalance stage not written yet; UIT-VSFC is unchanged. The
-   results in section 4 and the written reports describe the earlier stage-by-stage selection (NEU-ESC =
-   ViSoBERT + `sum`); their tables and figures are kept in `reports/sequential_selection/`. Still to run on
-   Kaggle for NEU-ESC on PhoBERT: E3 (18 runs), E4b (6), then `select --stage imbalance --force`, then E5 (36).
-   See [what_can_do.md](what_can_do.md) section 4.2.
-
+0. **Route C2-a: runs finished 2026-10-11, documents not rewritten yet.** `selection.json` holds the joint choice:
+   NEU-ESC = PhoBERT + `smartref`, imbalance none, final model `mtlaware/smartref` (test 77.29 sentiment, 62.23
+   topic; linear heads + `smartref` give 77.29 / 63.04); UIT-VSFC is unchanged. 60 new runs (E3 18, E5 36, E4b 6)
+   are merged: 294 finished runs, none failed. `reports/tables/` and `reports/figures/` are rebuilt for this
+   selection. Section 4 above and the written reports still describe the earlier stage-by-stage selection
+   (NEU-ESC = ViSoBERT + `sum`); its tables and figures are in `reports/sequential_selection/` and can be rebuilt
+   with `DPL_OUT_DIR=reports/sequential_selection python -m trainer.analysis all`. E2 was not rerun on PhoBERT,
+   so the NEU-ESC RQ2 table has only `sum` and `smartref`. See [what_can_do.md](what_can_do.md) section 4.2.
 1. **Not run:** E6 (MLM ablation, 6 runs, about 1.8 h) and E7 (cross-dataset evaluation). E7 needs the kept
    checkpoints of E1 and E4 in one `models/` folder; they are in three separate Kaggle outputs, so the older
    versions' `models` folders would first have to be turned into Kaggle Datasets.
