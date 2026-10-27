@@ -28,7 +28,7 @@ command and result. `NEXT_STEPS.md` is from before training started and is out o
 | Kaggle quota | About 30 GPU-hours per week. A session stops at 12 hours. |
 | After a session | The user downloads `results_<experiment>.zip` (runs without checkpoints + tables). Then locally: `python -m trainer.analysis merge --from <zip>/models --to models --apply`, then `status`, `check`, `significance`, `tables`, `figures`. |
 | Local machine | Windows, RTX 5050 8 GB, `.venv` with torch 2.11.0+cu128. **Keep this environment unchanged.** Used for tests, analysis and quick checks, not for real training. |
-| Tests | `for t in tests/test_*.py; do .venv/Scripts/python.exe $t | tail -1; done` (131 tests, CPU, no downloads). |
+| Tests | `for t in tests/test_*.py; do .venv/Scripts/python.exe $t | tail -1; done` (134 tests, CPU, no downloads). |
 | Commits | The user commits and pushes. Give the commands; do not commit or push unless asked. |
 | Selection | Always on validation scores, never on test (`trainer/selection.py`). A manual choice needs `--choose TAG --reason TEXT`. |
 

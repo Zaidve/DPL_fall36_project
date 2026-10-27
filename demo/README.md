@@ -1,8 +1,8 @@
 # Demo: a post's topic and sentiment from its comments
 
-A local web page. Give it the comments under a social media post (pasted, from a file, or read from a Reddit
-link); it classifies every comment with a trained model of this project and reads the post's topic and
-sentiment from all comments together.
+A local web page. Give it the comments under a social media post (pasted, from a file, or read from a YouTube
+or Reddit link); it classifies every comment with a trained model of this project and reads the post's topic
+and sentiment from all comments together.
 
 ```
 python -m demo.server
@@ -45,11 +45,31 @@ run and the E4 final models kept theirs, for example `neu-esc__phobert__mtl__see
 - **Paste comments**: copy them from Facebook, X, TikTok, a forum or anywhere, one comment per line (or
   separated by empty lines for comments that span several lines). A `.txt` file, or a `.csv` with a
   `text` / `comment` / `message` / `body` / `content` column, can be loaded instead.
-- **Post link**: Reddit links are read directly. Facebook and X do not allow other programs to read comments
-  (Facebook needs a logged-in account and an app reviewed by Meta; X sells API access), so for them the page
-  asks you to paste the comments.
+- **Post link**: YouTube and Reddit links are read directly (each needs a free key, below). Facebook and X do
+  not allow other programs to read comments (Facebook needs a logged-in account and an app reviewed by Meta;
+  X sells API access), so for them the page asks you to paste the comments.
 - **Post text** (optional): the post itself is also classified and shown next to the answer from the
   comments.
+
+### YouTube access
+
+YouTube links work with a free YouTube Data API key:
+
+1. Open https://console.cloud.google.com/, create a project (any name).
+2. In **APIs & Services → Library**, enable **YouTube Data API v3**.
+3. In **APIs & Services → Credentials**, choose **Create credentials → API key**. Restricting the key to the
+   YouTube Data API v3 is a good idea.
+4. Start the demo with the key in the environment:
+
+```bash
+YOUTUBE_API_KEY=<key> .venv/Scripts/python.exe -m demo.server
+```
+
+Accepted links: `youtube.com/watch?v=…`, `youtu.be/…`, `youtube.com/shorts/…`, `/live/…`, `/embed/…`. The demo
+reads the video's title and description (shown as the post text) and up to 1,000 comments, most relevant first,
+with up to 5 replies each as the API returns them. Each page of 100 comments costs 1 unit of the free quota of
+10,000 units a day. Videos with comments turned off, private videos and an exhausted quota give a message in the
+page. The key stays in the demo's environment; it is sent only to Google and never shown or written anywhere.
 
 ### Reddit access
 
@@ -82,7 +102,8 @@ environment of the demo process and is not written anywhere.
   rough guide.
 - They were trained on posts, not on comments; a comment often only makes sense next to its post.
 - Long comments are cut at the training length (80 PhoBERT tokens for NEU-ESC, 32 for UIT-VSFC).
-- The page runs on your machine only (127.0.0.1). It sends nothing anywhere except the Reddit requests.
+- The page runs on your machine only (127.0.0.1). It sends nothing anywhere except the YouTube and Reddit
+  requests for a link you give it.
 
 ## 5. Files
 
@@ -90,7 +111,7 @@ environment of the demo process and is not written anywhere.
 |---|---|
 | `demo/server.py` | the local web server and the JSON API (`/api/models`, `/api/fetch`, `/api/analyze`) |
 | `demo/predictor.py` | a run folder as a predictor: model, tokenizer, segmenter, both heads in one pass |
-| `demo/core.py` | cleaning, Vietnamese guess, comment splitting, Reddit parsing, the post-level aggregate |
+| `demo/core.py` | cleaning, Vietnamese guess, comment splitting, YouTube / Reddit link and answer parsing, the post-level aggregate |
 | `demo/static/index.html` | the page |
 | `configs/experiment/demo_model.yaml` | the Kaggle experiment that trains the two demo models |
-| `tests/test_demo.py` | 11 tests (CPU, no downloads) |
+| `tests/test_demo.py` | 14 tests (CPU, no downloads, no network) |

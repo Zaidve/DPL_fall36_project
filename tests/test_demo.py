@@ -34,6 +34,45 @@ REDDIT = [
 ]
 
 
+YT_VIDEO = {'id': 'dQw4w9WgXcQ', 'snippet': {'title': 'Ôn thi Kinh tế vi mô', 'description': 'Tóm tắt chương 1',
+                                              'channelTitle': 'NEU Channel'}}
+
+
+def yt_thread(text, likes=0, replies=()):
+    return {'snippet': {'topLevelComment': {'snippet': {'textOriginal': text, 'authorDisplayName': 'a', 'likeCount': likes}}},
+            'replies': {'comments': [{'snippet': {'textOriginal': r, 'authorDisplayName': 'b', 'likeCount': 0}}
+                                     for r in replies]} if replies else None}
+
+
+YT_PAGES = [{'items': [yt_thread('Cảm ơn thầy, dễ hiểu quá', 7, ['Đúng vậy']), yt_thread('  ')], 'nextPageToken': 'p2'},
+            {'items': [yt_thread('Great video')]}]
+
+
+class FakeYouTube:
+    """ Answers videos.list / commentThreads.list like the API; records the urls it was asked for. """
+
+    def __init__(self, video=YT_VIDEO, pages=YT_PAGES, error=None):
+        self.video, self.pages, self.error, self.urls = video, pages, error, []
+
+    def __call__(self, url):
+        from urllib.parse import parse_qs, urlparse
+        self.urls.append(url)
+        if self.error:
+            raise self.error
+        q = {k: v[0] for k, v in parse_qs(urlparse(url).query).items()}
+        if '/videos?' in url:
+            return {'items': [self.video] if self.video else []}
+        return self.pages[1] if q.get('pageToken') == 'p2' else self.pages[0]
+
+
+def google_error(code, reason, details=None):
+    import io
+    import urllib.error
+    body = json.dumps({'error': {'code': code, 'message': f'{reason} message', 'errors': [{'reason': reason}],
+                                 'details': details or []}}).encode()
+    return urllib.error.HTTPError('https://www.googleapis.com/youtube/v3/x?key=SECRET', code, 'err', {}, io.BytesIO(body))
+
+
 def test_clean_comment_matches_processed_style():
     assert C.clean_comment('Thầy dạy HAY quá!!!  Xem https://a.vn/x nhé') == 'thầy dạy hay quá ! ! xem urltoken nhé'
     assert C.clean_comment('Gọi 0912345678, ok?') == 'gọi phonetoken , ok ?'
@@ -71,6 +110,46 @@ def test_platform_and_reddit_ids():
     assert C.reddit_thread_id('https://redd.it/1abcde') == '1abcde'
     assert C.reddit_thread_id('https://www.reddit.com/r/VietNam/') is None
     assert C.reddit_json_url('abc', 50) == 'https://www.reddit.com/comments/abc.json?limit=50&sort=top&raw_json=1'
+
+
+def test_youtube_links():
+    for url in ('https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=42s', 'https://m.youtube.com/watch?feature=x&v=dQw4w9WgXcQ',
+                'https://youtu.be/dQw4w9WgXcQ?si=abc', 'https://www.youtube.com/shorts/dQw4w9WgXcQ',
+                'https://www.youtube.com/live/dQw4w9WgXcQ?feature=share', 'https://www.youtube.com/embed/dQw4w9WgXcQ'):
+        assert C.platform_of(url) == 'youtube' and C.youtube_video_id(url) == 'dQw4w9WgXcQ', url
+    for url in ('https://www.youtube.com/@NEUchannel', 'https://www.youtube.com/watch?v=short', 'https://youtu.be/',
+                'https://notyoutube.com/watch?v=dQw4w9WgXcQ'):
+        assert C.youtube_video_id(url) is None, url
+
+
+def test_parse_youtube_thread():
+    thread = C.parse_youtube_thread(YT_VIDEO, YT_PAGES)
+    assert thread['post'] == {'title': 'Ôn thi Kinh tế vi mô', 'text': 'Tóm tắt chương 1', 'author': 'NEU Channel',
+                              'source': 'YouTube · NEU Channel', 'url': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'}
+    assert [(c['text'], c['depth'], c['score']) for c in thread['comments']] == [
+        ('Cảm ơn thầy, dễ hiểu quá', 0, 7), ('Đúng vậy', 1, 0), ('Great video', 0, 0)]       # empty one skipped
+    assert len(C.parse_youtube_thread(YT_VIDEO, YT_PAGES, max_comments=2)['comments']) == 2
+
+
+def test_fetch_youtube_pages_and_errors():
+    url = 'https://youtu.be/dQw4w9WgXcQ'
+    fake = FakeYouTube()
+    res = SV.fetch_comments(url, youtube=SV.YouTubeAPI('KEY', fake))
+    assert res['platform'] == 'youtube' and len(res['comments']) == 3 and res['post']['author'] == 'NEU Channel'
+    assert len(fake.urls) == 3 and all('key=KEY' in u for u in fake.urls)                  # video + 2 comment pages
+    assert 'videoId=dQw4w9WgXcQ' in fake.urls[1] and 'maxResults=100' in fake.urls[1] and 'pageToken=p2' in fake.urls[2]
+
+    no_key = SV.fetch_comments(url, youtube=SV.YouTubeAPI('', fake))
+    assert 'YOUTUBE_API_KEY' in no_key['error'] and len(fake.urls) == 3                     # nothing requested
+    assert 'needs a free API key' in SV.fetch_comments(url)['error']
+    assert 'does not point to a video' in SV.fetch_comments('https://www.youtube.com/@x', youtube=SV.YouTubeAPI('K', fake))['error']
+    assert 'no video' in SV.fetch_comments(url, youtube=SV.YouTubeAPI('K', FakeYouTube(video=None)))['error']
+    for err, text in ((google_error(403, 'commentsDisabled'), 'turned its comments off'),
+                      (google_error(403, 'quotaExceeded'), 'daily quota'),
+                      (google_error(400, 'badRequest', [{'reason': 'API_KEY_INVALID'}]), 'rejected the API key'),
+                      (google_error(500, 'backendError'), 'YouTube answered 500: backendError message')):
+        res = SV.fetch_comments(url, youtube=SV.YouTubeAPI('SECRET', FakeYouTube(error=err)))
+        assert text in res['error'] and 'SECRET' not in res['error'], res
 
 
 def test_parse_reddit_thread():
@@ -179,7 +258,8 @@ def test_server_endpoints():
     with tempfile.TemporaryDirectory() as tmp:
         folder = fake_run(tmp)
         models = SV.Models([folder], loader=tiny_predictor)
-        server = SV.ThreadingHTTPServer(('127.0.0.1', 0), SV.make_handler(models, fetch=lambda url: REDDIT))
+        server = SV.ThreadingHTTPServer(('127.0.0.1', 0), SV.make_handler(
+            models, fetch=lambda url: REDDIT, youtube=SV.YouTubeAPI('KEY', FakeYouTube())))
         threading.Thread(target=server.serve_forever, daemon=True).start()
         base = f'http://127.0.0.1:{server.server_address[1]}'
 
@@ -198,6 +278,8 @@ def test_server_endpoints():
             assert status == 200 and json.loads(body)['models'][0]['id'] == folder.name
             status, body = call('/api/fetch', {'url': 'https://redd.it/abc123'})
             assert status == 200 and len(json.loads(body)['comments']) == 3
+            status, body = call('/api/fetch', {'url': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'})
+            assert status == 200 and json.loads(body)['post']['source'] == 'YouTube · NEU Channel'
             status, body = call('/api/analyze', {'comments': ['Đắt quá trời luôn', 'ko biết nữa mn ơi']})
             data = json.loads(body)
             assert status == 200 and data['n_used'] == 2 and data['post']['sentiment']['n'] == 2

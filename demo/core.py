@@ -6,14 +6,16 @@
       clean_comment(text)                 normalized like data/processed text_clean (lowercase, spaced punctuation)
       looks_vietnamese(text)              heuristic: Vietnamese letters or common unaccented Vietnamese words
       split_comments(text, mode)          'line' (one per line) or 'blank' (separated by empty lines)
-      platform_of(url)                    'reddit' | 'facebook' | 'x' | 'other'
+      platform_of(url)                    'reddit' | 'youtube' | 'facebook' | 'x' | 'other'
       reddit_thread_id(url)               the base-36 post id in a reddit.com / redd.it link
       parse_reddit_thread(payload)        post + flattened comments from https://www.reddit.com/comments/<id>.json
+      youtube_video_id(url)               the 11-character video id of a watch / youtu.be / shorts / live / embed link
+      parse_youtube_thread(video, pages)  post + comments from YouTube Data API videos.list / commentThreads.list
       aggregate(probs, names)             post-level distribution, top label, agreement and counts
 """
 import re
 import unicodedata
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 from utils.preprocess import normalize_text
 
@@ -86,6 +88,8 @@ def platform_of(url):
     host = host[4:] if host.startswith('www.') else host
     if host == 'redd.it' or host == 'reddit.com' or host.endswith('.reddit.com'):
         return 'reddit'
+    if host in ('youtube.com', 'youtu.be', 'youtube-nocookie.com') or host.endswith('.youtube.com'):
+        return 'youtube'
     if host in ('facebook.com', 'fb.com', 'fb.watch') or host.endswith('.facebook.com'):
         return 'facebook'
     if host in ('x.com', 'twitter.com', 't.co') or host.endswith('.twitter.com') or host.endswith('.x.com'):
@@ -124,7 +128,7 @@ def parse_reddit_thread(payload, max_comments=500):
         raise ValueError('the Reddit thread has no post')
     p = children[0].get('data', {})
     post = {'title': p.get('title', ''), 'text': p.get('selftext', '') or '', 'author': p.get('author'),
-            'subreddit': p.get('subreddit'), 'score': p.get('score'),
+            'subreddit': p.get('subreddit'), 'score': p.get('score'), 'source': f"r/{p.get('subreddit') or '?'}",
             'url': 'https://www.reddit.com' + p['permalink'] if p.get('permalink') else None}
     comments = []
 
@@ -143,6 +147,50 @@ def parse_reddit_thread(payload, max_comments=500):
                 walk(replies, depth + 1)
 
     walk(payload[1], 0)
+    return {'post': post, 'comments': comments}
+
+
+_YT_ID = r'([A-Za-z0-9_-]{11})'
+_YT_PATH_RE = re.compile(r'^/(?:shorts|live|embed|v|e)/' + _YT_ID + r'(?:[/?]|$)')
+
+
+def youtube_video_id(url):
+    """ youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID (also live/, embed/) -> ID, else None. """
+    if platform_of(url) != 'youtube':
+        return None
+    parsed = urlparse(str(url or '').strip())
+    if (parsed.hostname or '').lower() == 'youtu.be':
+        m = re.fullmatch('/' + _YT_ID + '/?', parsed.path)
+        return m.group(1) if m else None
+    v = parse_qs(parsed.query).get('v', [''])[0]
+    if re.fullmatch(_YT_ID, v):
+        return v
+    m = _YT_PATH_RE.match(parsed.path)
+    return m.group(1) if m else None
+
+
+def parse_youtube_thread(video, pages, max_comments=500):
+    """ video: one item of videos.list (part=snippet); pages: commentThreads.list answers (part=snippet,replies).
+        Top-level comments in the API's order, each followed by the replies the API included (up to 5). """
+    snip = (video or {}).get('snippet') or {}
+    video_id = (video or {}).get('id')
+    post = {'title': snip.get('title', ''), 'text': snip.get('description', '') or '', 'author': snip.get('channelTitle'),
+            'source': f"YouTube · {snip.get('channelTitle') or '?'}",
+            'url': f'https://www.youtube.com/watch?v={video_id}' if video_id else None}
+    comments = []
+
+    def add(c, depth):
+        s = (c or {}).get('snippet') or {}
+        text = (s.get('textOriginal') or s.get('textDisplay') or '').strip()
+        if text and len(comments) < max_comments:
+            comments.append({'text': text, 'author': s.get('authorDisplayName'), 'score': s.get('likeCount'),
+                             'depth': depth})
+
+    for page in pages:
+        for item in (page or {}).get('items', []):
+            add(item.get('snippet', {}).get('topLevelComment'), 0)
+            for reply in (item.get('replies') or {}).get('comments', []):
+                add(reply, 1)
     return {'post': post, 'comments': comments}
 
 

@@ -3,16 +3,17 @@
 
       python -m demo.server [--checkpoints DIR ...] [--port 8765] [--device cuda|cpu]
 
-    Opens a local web page (http://127.0.0.1:8765). Comments come from a Reddit link or are pasted / loaded from a
-    .txt or .csv file (Facebook, X and other sites). Reddit is read through its API when REDDIT_CLIENT_ID and
-    REDDIT_CLIENT_SECRET are set (a free "script" app at https://www.reddit.com/prefs/apps), else through its
-    public JSON, which Reddit often refuses (403) for requests without an account. Every comment is
+    Opens a local web page (http://127.0.0.1:8765). Comments come from a YouTube or Reddit link, or are pasted /
+    loaded from a .txt or .csv file (Facebook, X and other sites).
+      YouTube: YouTube Data API v3 with YOUTUBE_API_KEY (a free key from Google Cloud; 1 quota unit per 100 comments).
+      Reddit:  its API when REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET are set (a free "script" app at
+               https://www.reddit.com/prefs/apps), else its public JSON, which Reddit often refuses (403). Every comment is
     classified by a trained run (config.yaml + best.pt, default folder demo/checkpoints/), and the post-level
     answer is the mean of the comments' probabilities.
 
     API (JSON):
       GET  /api/models                          the loaded checkpoints and their label sets
-      POST /api/fetch    {url}                  Reddit: {post, comments}; Facebook / X: an explanation
+      POST /api/fetch    {url}                  YouTube / Reddit: {post, comments}; Facebook / X: an explanation
       POST /api/analyze  {model, comments: [str | {text, ...}], post_text?, include_other_languages?}
 """
 import argparse
@@ -25,9 +26,10 @@ import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import urlencode
 
-from demo.core import (aggregate, looks_vietnamese, parse_reddit_thread, platform_of, reddit_json_url,
-                       reddit_thread_id)
+from demo.core import (aggregate, looks_vietnamese, parse_reddit_thread, parse_youtube_thread, platform_of,
+                       reddit_json_url, reddit_thread_id, youtube_video_id)
 
 HERE = Path(__file__).resolve().parent
 STATIC = HERE / 'static'
@@ -109,9 +111,90 @@ def reddit_fetcher():
     return api if api.configured else fetch_json
 
 
-def fetch_comments(url, fetch=fetch_json):
-    """ {platform, post, comments} for a Reddit link; {platform, error} otherwise or when Reddit refuses. """
+class YouTubeAPI:
+    """ YouTube Data API v3 with an API key (YOUTUBE_API_KEY): videos.list for the post, commentThreads.list for
+        the comments, 100 per page (1 quota unit per page; the free quota is 10,000 units a day). """
+    BASE = 'https://www.googleapis.com/youtube/v3/'
+
+    def __init__(self, key=None, fetch=None):
+        self.key = key if key is not None else os.environ.get('YOUTUBE_API_KEY')
+        self.fetch = fetch or (lambda url: fetch_json(url))
+
+    @property
+    def configured(self):
+        return bool(self.key)
+
+    def get(self, method, **params):
+        return self.fetch(self.BASE + method + '?' + urlencode({**params, 'key': self.key}))
+
+    def thread(self, video_id, max_comments=MAX_COMMENTS):
+        found = self.get('videos', part='snippet', id=video_id).get('items') or []
+        if not found:
+            raise LookupError('YouTube has no video with this id (it may be private or removed)')
+        pages, token, n = [], None, 0
+        while n < max_comments:
+            params = {'part': 'snippet,replies', 'videoId': video_id, 'maxResults': 100, 'order': 'relevance',
+                      'textFormat': 'plainText', **({'pageToken': token} if token else {})}
+            page = self.get('commentThreads', **params)
+            pages.append(page)
+            n += sum(1 + len((i.get('replies') or {}).get('comments', [])) for i in page.get('items', []))
+            token = page.get('nextPageToken')
+            if not token:
+                break
+        return parse_youtube_thread(found[0], pages, max_comments)
+
+
+YOUTUBE_REASONS = {
+    'commentsDisabled': 'The owner of this video turned its comments off.',
+    'quotaExceeded': 'The YouTube API key has used its daily quota (10,000 units); it resets at midnight Pacific time.',
+    'videoNotFound': 'YouTube has no video with this id (it may be private or removed).',
+    'keyInvalid': 'YouTube rejected the API key. Check YOUTUBE_API_KEY and restart the demo.',
+    'accessNotConfigured': 'The API key\'s Google Cloud project does not have "YouTube Data API v3" enabled.',
+    'forbidden': 'YouTube does not allow reading the comments of this video.',
+}
+
+
+def _google_error(e):
+    """ The `reason` and message of a Google API error answer (never the request URL, which holds the key). """
+    try:
+        err = json.loads(e.read().decode('utf-8')).get('error', {})
+    except Exception:  # noqa: BLE001
+        return None, ''
+    reasons = [x.get('reason') for x in err.get('errors', []) if x.get('reason')]
+    if any(d.get('reason') == 'API_KEY_INVALID' for d in err.get('details', []) or []):
+        reasons.insert(0, 'keyInvalid')
+    return (reasons[0] if reasons else None), err.get('message', '')
+
+
+def fetch_youtube(url, youtube):
+    platform = 'youtube'
+    video_id = youtube_video_id(url)
+    if not video_id:
+        return {'platform': platform, 'error': 'This YouTube link does not point to a video (watch?v=…, youtu.be/… '
+                                               'or /shorts/…).'}
+    if youtube is None or not youtube.configured:
+        return {'platform': platform, 'error': 'Reading YouTube comments needs a free API key. Set YOUTUBE_API_KEY '
+                                               '(see demo/README.md) and restart the demo, or paste the comments.'}
+    try:
+        return {'platform': platform, **youtube.thread(video_id, MAX_COMMENTS)}
+    except urllib.error.HTTPError as e:
+        reason, message = _google_error(e)
+        return {'platform': platform, 'error': YOUTUBE_REASONS.get(reason) or f'YouTube answered {e.code}: '
+                                                                             f'{message or e.reason}'}
+    except LookupError as e:
+        return {'platform': platform, 'error': f'{e}.'}
+    except (urllib.error.URLError, TimeoutError) as e:
+        return {'platform': platform, 'error': f'Could not reach YouTube ({getattr(e, "reason", e)}).'}
+    except (ValueError, AttributeError) as e:
+        return {'platform': platform, 'error': f'Unexpected answer from YouTube: {e}'}
+
+
+def fetch_comments(url, fetch=fetch_json, youtube=None):
+    """ {platform, post, comments} for a YouTube or Reddit link; {platform, error} for other links or failures.
+        `fetch` reads Reddit's JSON; `youtube` is a YouTubeAPI (None: not configured). """
     platform = platform_of(url)
+    if platform == 'youtube':
+        return fetch_youtube(url, youtube)
     if platform != 'reddit':
         return {'platform': platform, 'error': NO_FETCH[platform]}
     thread_id = reddit_thread_id(url)
@@ -166,8 +249,9 @@ def analyze(predictor, comments, post_text=None, include_other_languages=False):
     return result
 
 
-def make_handler(models, fetch=None):
+def make_handler(models, fetch=None, youtube=None):
     fetch = fetch or reddit_fetcher()
+    youtube = youtube if youtube is not None else YouTubeAPI()
 
     class Handler(BaseHTTPRequestHandler):
         server_version = 'DPLDemo/0.1'
@@ -211,7 +295,7 @@ def make_handler(models, fetch=None):
                 return self._send(400, {'error': f'bad request: {e}'})
             try:
                 if self.path == '/api/fetch':
-                    return self._send(200, fetch_comments(body.get('url', ''), fetch))
+                    return self._send(200, fetch_comments(body.get('url', ''), fetch, youtube))
                 if self.path == '/api/analyze':
                     comments = body.get('comments') or []
                     if not isinstance(comments, list) or not comments:
@@ -244,6 +328,7 @@ def main(argv=None):
     run_dirs.sort(key=lambda d: (not d.name.startswith('neu-esc'), d.name))     # NEU-ESC first: social media posts
     models = Models(run_dirs, args.device)
     print('models:', ', '.join(models.ids()))
+    print('youtube:', 'API key set' if YouTubeAPI().configured else 'no key (set YOUTUBE_API_KEY to read YouTube links)')
     print('reddit:', 'API with REDDIT_CLIENT_ID' if RedditAPI().configured else 'public JSON (set REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET for the API)')
     print(f'loading {models.ids()[0]} ...')
     models.get(models.ids()[0])

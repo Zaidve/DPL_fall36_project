@@ -73,7 +73,7 @@
 <body>
 <main>
   <h1>What is this post about, and how do people feel?</h1>
-  <p class="sub">Paste the comments under a post, or give a Reddit link. Each comment is classified by a model trained
+  <p class="sub">Paste the comments under a post, or give a YouTube or Reddit link. Each comment is classified by a model trained
     on Vietnamese student forum posts, and the post's topic and sentiment are read from all its comments together.</p>
 
   <section class="card">
@@ -93,16 +93,16 @@
     </div>
 
     <div id="panel-link" class="hidden">
-      <label for="url">Post link <span class="hint">Reddit links are read directly. Facebook and X do not allow it; paste their comments instead.</span></label>
+      <label for="url">Post link <span class="hint">YouTube and Reddit links are read directly. Facebook and X do not allow it; paste their comments instead.</span></label>
       <div class="row">
-        <div style="flex: 4 1 320px"><input type="text" id="url" placeholder="https://www.reddit.com/r/VietNam/comments/…"></div>
+        <div style="flex: 4 1 320px"><input type="text" id="url" placeholder="https://www.youtube.com/watch?v=… or https://www.reddit.com/r/…/comments/…"></div>
         <div style="flex: 0 0 auto"><button class="secondary" id="fetch">Get comments</button></div>
       </div>
       <p id="fetch-note" class="note hidden"></p>
     </div>
 
     <div id="panel-paste">
-      <label for="comments">Comments <span class="hint">Facebook, X, Reddit, TikTok, a forum… one comment per line, or separated by empty lines.</span></label>
+      <label for="comments">Comments <span class="hint">Facebook, X, TikTok, a forum… one comment per line, or separated by empty lines.</span></label>
       <textarea id="comments" placeholder="Thầy dạy dễ hiểu lắm, cảm ơn thầy!&#10;Môn này khó quá, ai có tài liệu cho mình xin với&#10;ko biết thi cuối kì có khó ko mn ơi"></textarea>
       <div class="row" style="margin-top:10px">
         <div>
@@ -254,8 +254,9 @@ $('fetch').addEventListener('click', async () => {
   try {
     const data = await api('/api/fetch', {url});
     if (data.error) {
-      show($('fetch-note'), data.error, data.platform === 'reddit' ? 'err' : 'warn');
-      if (data.platform !== 'reddit') $('tab-paste').click();
+      const readable = data.platform === 'reddit' || data.platform === 'youtube';
+      show($('fetch-note'), data.error, readable ? 'err' : 'warn');
+      if (!readable) $('tab-paste').click();
       return;
     }
     fetchedComments = data.comments;
@@ -263,7 +264,7 @@ $('fetch').addEventListener('click', async () => {
     $('post').value = [post.title, post.text].filter(Boolean).join('\n\n');
     $('comments').value = data.comments.map((c) => c.text.replace(/\s*\n\s*/g, ' ')).join('\n');
     $('split').value = 'line';
-    show($('fetch-note'), `Read ${data.comments.length} comments from r/${post.subreddit || '?'}. They are in the Paste tab; press Analyze.`, 'info');
+    show($('fetch-note'), `Read ${data.comments.length} comments from ${post.source || 'the post'}. They are in the Paste comments tab; press Analyze.`, 'info');
   } catch (err) {
     show($('fetch-note'), 'Could not reach the demo server: ' + err, 'err');
   } finally {
