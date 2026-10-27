@@ -73,7 +73,7 @@ def build_matrix(experiment_paths=None, save=True):
     paths = experiment_paths or sorted((CONFIGS_DIR / 'experiment').glob('*.yaml'))
     rows, seen = [], set()
     for path in paths:
-        if load_config(path).get('evaluate_only'):
+        if load_config(path).get('evaluate_only') or load_config(path).get('exclude_from_matrix'):
             continue
         exp = T.load_experiment(path)
         for s in T.expand_runs(exp, placeholders=True):

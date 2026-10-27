@@ -1,0 +1,17 @@
+# Demo models (demo/README.md) - not part of the experiment matrix
+# The final models of Route C2-b, trained once (seed 42) with their checkpoint kept, for `python -m demo.server`:
+#   NEU-ESC  PhoBERT, linear heads, reference SMART   (best NEU-ESC configuration on validation, 0.7177)
+#   UIT-VSFC PhoBERT, linear heads, equal sum
+# = 2 runs, about 1 GPU-hour on a T4. The run ids are the same as E1b / E1 runs, so on Kaggle leave RESUME_FROM
+# empty, and copy the run folders (with best.pt) to demo/checkpoints/ instead of merging them into models/.
+extends: configs/default.yaml
+experiment: demo_model
+exclude_from_matrix: true
+datasets: [neu-esc, uit-vsfc]
+backbones: [phobert]
+seeds: [42]
+train:
+  keep_checkpoint: true
+grid:
+  - {mode: mtl, tag: smartref, datasets: [neu-esc]}
+  - {mode: mtl, tag: sum,      datasets: [uit-vsfc]}

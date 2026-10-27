@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Post Topic and Sentiment from Comments</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #1d2330; --muted: #5d6677; --line: #e1e4ea; --accent: #2a64d6;
+    --accent-soft: #e8effc; --warn: #9a5b00; --warn-soft: #fff4e0; --err: #b3261e; --err-soft: #fdecea;
+    --pos: #1f8a4c; --neg: #c2410c; --neu: #64748b; --tox: #9f1239; --bar: #2a64d6; --bar-bg: #edf0f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14171d; --card: #1c2028; --text: #e6e9ef; --muted: #9aa3b2; --line: #2d333e; --accent: #7aa7ff;
+            --accent-soft: #23304a; --warn: #f0b85a; --warn-soft: #3a2d14; --err: #ff8a80; --err-soft: #3d1f1d;
+            --pos: #4ade80; --neg: #fb923c; --neu: #94a3b8; --tox: #fb7185; --bar: #7aa7ff; --bar-bg: #2a303b; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1040px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 16px; margin: 0 0 12px; }
+  .sub { color: var(--muted); margin: 0 0 20px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px; margin-bottom: 16px; }
+  label { font-weight: 600; font-size: 13px; display: block; margin-bottom: 6px; }
+  .hint { color: var(--muted); font-size: 13px; font-weight: 400; }
+  input[type=text], textarea, select { width: 100%; font: inherit; color: inherit; background: var(--bg);
+    border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; }
+  textarea { min-height: 170px; resize: vertical; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
+  .row > * { flex: 1 1 220px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .tab { border: 0; background: none; color: var(--muted); font: inherit; font-weight: 600; padding: 8px 12px;
+         border-bottom: 2px solid transparent; cursor: pointer; }
+  .tab[aria-selected=true] { color: var(--accent); border-bottom-color: var(--accent); }
+  button.primary { background: var(--accent); color: #fff; border: 0; border-radius: 8px; padding: 10px 18px;
+                   font: inherit; font-weight: 600; cursor: pointer; }
+  button.secondary { background: var(--accent-soft); color: var(--accent); border: 0; border-radius: 8px;
+                     padding: 9px 14px; font: inherit; font-weight: 600; cursor: pointer; }
+  button:disabled { opacity: .55; cursor: default; }
+  .note { border-radius: 8px; padding: 10px 12px; font-size: 14px; margin: 10px 0 0; }
+  .note.warn { background: var(--warn-soft); color: var(--warn); }
+  .note.err { background: var(--err-soft); color: var(--err); }
+  .note.info { background: var(--accent-soft); color: var(--text); }
+  .check { display: flex; gap: 8px; align-items: center; font-size: 14px; font-weight: 400; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
+  .answer { font-size: 22px; font-weight: 700; margin: 2px 0; }
+  .meta { color: var(--muted); font-size: 13px; }
+  .bars { margin-top: 10px; }
+  .bar { display: grid; grid-template-columns: 140px 1fr 52px; gap: 8px; align-items: center; font-size: 13px; margin: 4px 0; }
+  .bar .track { background: var(--bar-bg); height: 10px; border-radius: 5px; overflow: hidden; }
+  .bar .fill { background: var(--bar); height: 100%; }
+  .bar .v { text-align: right; font-variant-numeric: tabular-nums; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .02em; }
+  td.text { width: 52%; word-break: break-word; }
+  tr.skip td { opacity: .5; }
+  .chip { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 600;
+          background: var(--bar-bg); white-space: nowrap; }
+  .chip.positive { color: var(--pos); } .chip.negative { color: var(--neg); } .chip.neutral { color: var(--neu); }
+  .chip.toxic { color: var(--tox); }
+  .p { color: var(--muted); font-size: 12px; margin-left: 4px; }
+  .table-wrap { overflow-x: auto; }
+  .hidden { display: none; }
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent;
+             border-radius: 50%; animation: spin .8s linear infinite; vertical-align: -2px; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  footer { color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>What is this post about, and how do people feel?</h1>
+  <p class="sub">Paste the comments under a post, or give a Reddit link. Each comment is classified by a model trained
+    on Vietnamese student forum posts, and the post's topic and sentiment are read from all its comments together.</p>
+
+  <section class="card">
+    <div class="row">
+      <div>
+        <label for="model">Model</label>
+        <select id="model"><option>Loading…</option></select>
+      </div>
+    </div>
+    <p id="model-note" class="note err hidden"></p>
+  </section>
+
+  <section class="card">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-paste" aria-selected="true" data-panel="panel-paste">Paste comments</button>
+      <button class="tab" role="tab" id="tab-link" aria-selected="false" data-panel="panel-link">Post link</button>
+    </div>
+
+    <div id="panel-link" class="hidden">
+      <label for="url">Post link <span class="hint">Reddit links are read directly. Facebook and X do not allow it; paste their comments instead.</span></label>
+      <div class="row">
+        <div style="flex: 4 1 320px"><input type="text" id="url" placeholder="https://www.reddit.com/r/VietNam/comments/…"></div>
+        <div style="flex: 0 0 auto"><button class="secondary" id="fetch">Get comments</button></div>
+      </div>
+      <p id="fetch-note" class="note hidden"></p>
+    </div>
+
+    <div id="panel-paste">
+      <label for="comments">Comments <span class="hint">Facebook, X, Reddit, TikTok, a forum… one comment per line, or separated by empty lines.</span></label>
+      <textarea id="comments" placeholder="Thầy dạy dễ hiểu lắm, cảm ơn thầy!&#10;Môn này khó quá, ai có tài liệu cho mình xin với&#10;ko biết thi cuối kì có khó ko mn ơi"></textarea>
+      <div class="row" style="margin-top:10px">
+        <div>
+          <label for="split">Separate comments by</label>
+          <select id="split">
+            <option value="line">each line</option>
+            <option value="blank">empty lines (for comments with several lines)</option>
+          </select>
+        </div>
+        <div>
+          <label for="file">Or load a file <span class="hint">.txt, or .csv with a text / comment / message column</span></label>
+          <input type="file" id="file" accept=".txt,.csv,text/plain,text/csv">
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <label for="post">Post text <span class="hint">optional; shown next to the answer from the comments</span></label>
+      <textarea id="post" style="min-height:70px" placeholder="The text of the post itself"></textarea>
+    </div>
+
+    <div class="row" style="margin-top:14px; align-items:center">
+      <label class="check" style="flex: 1 1 auto"><input type="checkbox" id="other-lang"> Also use comments that do not look Vietnamese</label>
+      <div style="flex: 0 0 auto"><button class="primary" id="analyze">Analyze</button></div>
+    </div>
+    <p id="analyze-note" class="note err hidden"></p>
+  </section>
+
+  <section id="results" class="hidden">
+    <div class="card">
+      <h2>The post, read from <span id="n-used"></span></h2>
+      <div class="grid2">
+        <div id="topic-box"></div>
+        <div id="sentiment-box"></div>
+      </div>
+      <p id="post-text-result" class="note info hidden"></p>
+      <p id="lang-note" class="note warn hidden"></p>
+    </div>
+    <div class="card">
+      <h2>Each comment</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Comment</th><th>Topic</th><th>Sentiment</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>The models were trained on NEU-ESC (Vietnamese student forum posts) or UIT-VSFC (course feedback sentences).
+      Comments on other subjects or in other languages fall outside what they learned, so treat the answers as a rough guide.
+      The post-level answer is the average of the comments' probabilities; "agreement" is the share of comments whose own top
+      label matches it.</p>
+  </footer>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+let models = [], fetchedComments = null;
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+}
+function pct(x) { return (100 * x).toFixed(0) + '%'; }
+function show(el, text, kind) {
+  el.className = 'note ' + (kind || '');
+  el.textContent = text;
+  el.classList.toggle('hidden', !text);
+}
+function currentModel() { return models.find((m) => m.id === $('model').value); }
+function display(task, name) {
+  const m = currentModel();
+  const hit = m && m.labels && m.labels[task] && m.labels[task].find((l) => l.name === name);
+  return hit ? hit.display : name;
+}
+
+async function api(path, body) {
+  const res = await fetch(path, body ? {method: 'POST', headers: {'Content-Type': 'application/json'},
+                                        body: JSON.stringify(body)} : undefined);
+  const data = await res.json().catch(() => ({error: `HTTP ${res.status}`}));
+  if (!res.ok && !data.error) data.error = `HTTP ${res.status}`;
+  return data;
+}
+
+async function loadModels() {
+  const data = await api('/api/models');
+  models = (data.models || []).filter((m) => !m.error);
+  const failed = (data.models || []).filter((m) => m.error);
+  $('model').innerHTML = models.map((m) =>
+    `<option value="${esc(m.id)}">${esc(m.dataset_name)} · ${esc(m.backbone)}, ${esc(m.mode)}, ${esc(m.tag)}</option>`).join('');
+  if (!models.length) show($('model-note'), 'No model could be loaded. ' + failed.map((m) => `${m.id}: ${m.error}`).join(' '), 'err');
+  else if (failed.length) show($('model-note'), 'Some models failed to load: ' + failed.map((m) => `${m.id}: ${m.error}`).join(' '), 'err');
+}
+
+document.querySelectorAll('.tab').forEach((tab) => tab.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach((t) => {
+    t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+    $(t.dataset.panel).classList.toggle('hidden', t !== tab);
+  });
+}));
+
+function splitPasted() {
+  const text = $('comments').value.replace(/\r\n?/g, '\n');
+  const parts = $('split').value === 'blank' ? text.split(/\n\s*\n/).map((p) => p.split('\n').join(' ')) : text.split('\n');
+  return parts.map((p) => p.trim()).filter(Boolean);
+}
+
+function parseCsv(text) {
+  const rows = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"' && text[i + 1] === '"') { cell += '"'; i++; }
+      else if (c === '"') q = false;
+      else cell += c;
+    } else if (c === '"') q = true;
+    else if (c === ',') { row.push(cell); cell = ''; }
+    else if (c === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; }
+    else if (c !== '\r') cell += c;
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  return rows.filter((r) => r.some((x) => x.trim()));
+}
+
+$('file').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const text = await file.text();
+  let comments;
+  if (/\.csv$/i.test(file.name)) {
+    const rows = parseCsv(text);
+    const header = (rows[0] || []).map((h) => h.trim().toLowerCase());
+    let col = header.findIndex((h) => ['text', 'comment', 'comments', 'message', 'body', 'content', 'noi_dung', 'binh_luan'].includes(h));
+    const body = col >= 0 ? rows.slice(1) : rows;
+    if (col < 0) col = 0;
+    comments = body.map((r) => (r[col] || '').replace(/\s*\n\s*/g, ' ').trim()).filter(Boolean);
+    $('split').value = 'line';
+  } else {
+    comments = null;
+  }
+  $('comments').value = comments ? comments.join('\n') : text;
+  fetchedComments = null;
+});
+
+$('fetch').addEventListener('click', async () => {
+  const url = $('url').value.trim();
+  if (!url) return show($('fetch-note'), 'Enter a link first.', 'err');
+  $('fetch').disabled = true;
+  $('fetch').innerHTML = '<span class="spinner"></span>Reading…';
+  try {
+    const data = await api('/api/fetch', {url});
+    if (data.error) {
+      show($('fetch-note'), data.error, data.platform === 'reddit' ? 'err' : 'warn');
+      if (data.platform !== 'reddit') $('tab-paste').click();
+      return;
+    }
+    fetchedComments = data.comments;
+    const post = data.post || {};
+    $('post').value = [post.title, post.text].filter(Boolean).join('\n\n');
+    $('comments').value = data.comments.map((c) => c.text.replace(/\s*\n\s*/g, ' ')).join('\n');
+    $('split').value = 'line';
+    show($('fetch-note'), `Read ${data.comments.length} comments from r/${post.subreddit || '?'}. They are in the Paste tab; press Analyze.`, 'info');
+  } catch (err) {
+    show($('fetch-note'), 'Could not reach the demo server: ' + err, 'err');
+  } finally {
+    $('fetch').disabled = false;
+    $('fetch').textContent = 'Get comments';
+  }
+});
+
+$('comments').addEventListener('input', () => { fetchedComments = null; });
+
+function summaryBox(task, title, agg) {
+  if (!agg) return `<h2>${title}</h2><p class="meta">No comment could be used.</p>`;
+  const sorted = Object.entries(agg.distribution).sort((a, b) => b[1] - a[1]);
+  const bars = sorted.map(([name, p]) =>
+    `<div class="bar"><span>${esc(display(task, name))}</span><span class="track"><span class="fill" style="width:${(100 * p).toFixed(1)}%;display:block"></span></span><span class="v">${pct(p)}</span></div>`).join('');
+  return `<h2>${title}</h2>
+    <div class="answer">${esc(display(task, agg.label))}</div>
+    <div class="meta">${pct(agg.probability)} average probability · ${pct(agg.agreement)} of comments agree (${agg.counts[agg.label]} of ${agg.n})</div>
+    <div class="bars">${bars}</div>`;
+}
+
+function chip(task, res) {
+  if (!res) return '<span class="meta">–</span>';
+  const cls = task === 'sentiment' ? esc(res.label) : '';
+  return `<span class="chip ${cls}">${esc(display(task, res.label))}</span><span class="p">${pct(res.probability)}</span>`;
+}
+
+function render(data) {
+  $('results').classList.remove('hidden');
+  $('n-used').textContent = `${data.n_used} of ${data.n_comments} comments`;
+  $('topic-box').innerHTML = data.tasks.includes('topic') ? summaryBox('topic', 'Topic', data.post.topic) : '';
+  $('sentiment-box').innerHTML = data.tasks.includes('sentiment') ? summaryBox('sentiment', 'Sentiment', data.post.sentiment) : '';
+  if (data.post_text) {
+    const parts = data.tasks.map((t) => data.post_text[t] ? `${t}: ${display(t, data.post_text[t].label)} (${pct(data.post_text[t].probability)})` : '').filter(Boolean);
+    show($('post-text-result'), 'The post text alone gives ' + parts.join(', ') + '.', 'info');
+  } else show($('post-text-result'), '');
+  const notes = [];
+  if (data.n_other_language && !$('other-lang').checked)
+    notes.push(`${data.n_other_language} comment(s) do not look Vietnamese and were left out (greyed below).`);
+  if (data.n_truncated) notes.push(`Only the first ${data.n_comments} comments were analyzed.`);
+  if (data.n_used && data.n_used < 5) notes.push('Few comments: the post-level answer rests on very little.');
+  show($('lang-note'), notes.join(' '), 'warn');
+  $('rows').innerHTML = data.comments.map((c) => `<tr class="${c.used ? '' : 'skip'}">
+      <td class="text">${esc(c.text)}${c.score != null ? `<span class="p">▲${esc(c.score)}</span>` : ''}</td>
+      <td>${chip('topic', c.topic)}</td><td>${chip('sentiment', c.sentiment)}</td></tr>`).join('');
+}
+
+$('analyze').addEventListener('click', async () => {
+  const comments = fetchedComments || splitPasted();
+  if (!comments.length) return show($('analyze-note'), 'There are no comments to analyze. Paste some, or read them from a Reddit link.', 'err');
+  if (!models.length) return show($('analyze-note'), 'No model is loaded.', 'err');
+  show($('analyze-note'), '');
+  $('analyze').disabled = true;
+  $('analyze').innerHTML = '<span class="spinner"></span>Analyzing…';
+  try {
+    const data = await api('/api/analyze', {model: $('model').value, comments, post_text: $('post').value,
+                                            include_other_languages: $('other-lang').checked});
+    if (data.error) return show($('analyze-note'), data.error, 'err');
+    render(data);
+    $('results').scrollIntoView({behavior: 'smooth', block: 'start'});
+  } catch (err) {
+    show($('analyze-note'), 'Could not reach the demo server: ' + err, 'err');
+  } finally {
+    $('analyze').disabled = false;
+    $('analyze').textContent = 'Analyze';
+  }
+});
+
+loadModels();
+</script>
+</body>
+</html>

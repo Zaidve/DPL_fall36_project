@@ -34,7 +34,7 @@ DPL_project/
 │   ├── teencode.yaml        28 teencode entries (off by default)
 │   ├── model/               phobert.yaml, xlmr.yaml, visobert.yaml
 │   ├── data/                neu-esc.yaml, uit-vsfc.yaml (max_len per backbone)
-│   └── experiment/          e1_baseline … e7_cross_dataset.yaml, e8_aware_smartref.yaml
+│   └── experiment/          e1_baseline … e7_cross_dataset.yaml, e8_aware_smartref.yaml, demo_model.yaml (not in the matrix)
 ├── utils/
 │   ├── dataloader.py        raw loaders + label names (used by the EDA and preprocessing)
 │   ├── preprocess.py        python -m utils.preprocess
@@ -69,7 +69,8 @@ DPL_project/
 │   ├── DPL_Proposal_MTL_IEEE_EN.docx                                       proposal
 │   └── presentation_script.md                                              speaking script (EN + VI)
 ├── models/                  run outputs, one folder per run (gitignored; 234 finished runs, no checkpoints locally)
-├── tests/                   9 test files, 120 tests (+ fixtures: legacy model, fake run folders / full fake matrix)
+├── demo/                    local web demo: a post's topic and sentiment from its comments (demo/README.md)
+├── tests/                   10 test files, 131 tests (+ fixtures: legacy model, fake run folders / full fake matrix)
 ├── .venv/                   Python 3.11.0 (not in git)
 └── PROJECT_OVERVIEW.md      this file
 ```
@@ -343,7 +344,7 @@ Not installed: seaborn, tabulate, pytest (tests run with plain `python tests/<fi
 
 ---
 
-## 7. Tests (120, all passing)
+## 7. Tests (131, all passing)
 
 | File | Tests | Covers |
 |---|---|---|
@@ -355,6 +356,7 @@ Not installed: seaborn, tabulate, pytest (tests run with plain `python tests/<fi
 | `test_common_config.py` | 12 | paths, seeds, config `extends`, overrides |
 | `test_evaluate_runs.py` | 10 | metrics (argument order), predictions, run ids, resume, checkpoints |
 | `test_train.py` | 16 | the full trainer on CPU: every strategy, resume, early stop, errors, placeholders, shipped configs (E1–E8), time budget, selection `sum` / `none` |
+| `test_demo.py` | 11 | demo: cleaning, Vietnamese guess, comment splitting, Reddit parsing and API, aggregate, predictor, server endpoints |
 | `test_analysis.py` | 24 | run matrix, status, merge, results + seeds, session plan, consistency, selection stages (validation only, seeds, order, force, ties, manual choice, joint backbone + loss), McNemar / bootstrap, RQ5 pairs, tables + Markdown, every figure, E7 (3-label mapping, cross-eval + cache), CLI |
 
 Run one: `.venv/Scripts/python.exe tests/test_train.py` (CPU only, no downloads, ~20 s).
