@@ -15,3 +15,6 @@ reports/tables/*
 
 # demo checkpoints (run folders with best.pt, see demo/README.md)
 demo/checkpoints/
+
+# downloaded Kaggle results zips (already merged into models/)
+kaggle_run_data/
