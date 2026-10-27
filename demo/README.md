@@ -40,6 +40,14 @@ When the session ends, open the version's **Output**, and download each folder u
 run and the E4 final models kept theirs, for example `neu-esc__phobert__mtl__seed42__sum`. Any run folder with
 `config.yaml` and `best.pt` works.
 
+### Or run the whole demo on Kaggle
+
+`notebooks/kaggle_demo.ipynb` does everything in one Kaggle notebook (GPU T4, Internet On, *Run All*): it clones
+the code, trains the demo models if no checkpoint is found (or finds them in an attached notebook output), then
+classifies example comments, your pasted comments and a YouTube video (key from a Kaggle secret), and shows the
+answer as bars and a table. Optional cells serve this page through a public cloudflared address, and zip the
+models for download (`demo_checkpoints.zip`, to unzip into `demo/checkpoints/`).
+
 ## 2. Use it
 
 - **Paste comments**: copy them from Facebook, X, TikTok, a forum or anywhere, one comment per line (or
@@ -114,4 +122,5 @@ environment of the demo process and is not written anywhere.
 | `demo/core.py` | cleaning, Vietnamese guess, comment splitting, YouTube / Reddit link and answer parsing, the post-level aggregate |
 | `demo/static/index.html` | the page |
 | `configs/experiment/demo_model.yaml` | the Kaggle experiment that trains the two demo models |
+| `notebooks/kaggle_demo.ipynb` | the demo as a Kaggle notebook (train or find the models, analyze, optional public page) |
 | `tests/test_demo.py` | 14 tests (CPU, no downloads, no network) |

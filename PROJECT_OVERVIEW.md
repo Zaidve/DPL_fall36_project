@@ -58,7 +58,8 @@ DPL_project/
 │                            significance | tables | figures | cross-eval | all
 ├── notebooks/
 │   ├── 01_eda.ipynb         EDA (outputs in reports/)
-│   └── kaggle_runner.ipynb  runs one experiment on Kaggle (also runs locally)
+│   ├── kaggle_runner.ipynb  runs one experiment on Kaggle (also runs locally)
+│   └── kaggle_demo.ipynb    the demo on Kaggle: train or find the demo models, analyze comments / a YouTube video
 ├── reports/                 gitignored, except eda_summary.json and tables/selection.json (the code reads these two)
 │   ├── eda_summary.json, eda_findings.md             EDA
 │   ├── tables/              EDA + preprocessing tables, result tables (results_*, rq1 … rq5, cost),
