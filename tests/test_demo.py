@@ -313,6 +313,22 @@ def test_reddit_api_uses_oauth_host_and_caches_token():
         SV.fetch_json = original
 
 
+def test_load_secrets():
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / 'secrets.env'
+        assert SV.load_secrets(path) == []                                         # no file: nothing
+        path.write_text('# keys\nDEMO_TEST_A = "abc"\n\nDEMO_TEST_B=x=y\nDEMO_TEST_EMPTY=\nnot a line\n', encoding='utf-8')
+        os.environ['DEMO_TEST_B'] = 'from environment'
+        try:
+            assert SV.load_secrets(path) == ['DEMO_TEST_A', 'DEMO_TEST_B']
+            assert os.environ['DEMO_TEST_A'] == 'abc'                              # quotes removed
+            assert os.environ['DEMO_TEST_B'] == 'from environment'                 # the environment wins
+            assert 'DEMO_TEST_EMPTY' not in os.environ
+        finally:
+            for k in ('DEMO_TEST_A', 'DEMO_TEST_B'):
+                os.environ.pop(k, None)
+
+
 import urllib.error  # noqa: E402  (used in test_server_endpoints)
 
 if __name__ == '__main__':

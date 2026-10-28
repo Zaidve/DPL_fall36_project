@@ -34,6 +34,7 @@ from demo.core import (aggregate, looks_vietnamese, parse_reddit_thread, parse_y
 HERE = Path(__file__).resolve().parent
 STATIC = HERE / 'static'
 DEFAULT_CHECKPOINTS = HERE / 'checkpoints'
+SECRETS_FILE = HERE / 'secrets.env'          # KEY=value lines (YOUTUBE_API_KEY, REDDIT_CLIENT_ID, ...); ignored by git
 MAX_COMMENTS = 1000
 MAX_BODY = 5_000_000
 USER_AGENT = 'DPL-project-demo/0.1 (local research demo)'
@@ -312,6 +313,26 @@ def make_handler(models, fetch=None, youtube=None):
     return Handler
 
 
+def load_secrets(path=SECRETS_FILE):
+    """ Put KEY=value lines of `path` into os.environ; a variable already set in the environment wins.
+        Blank lines and lines starting with # are skipped; quotes around a value are removed. Returns the keys read. """
+    path = Path(path)
+    if not path.is_file():
+        return []
+    keys = []
+    for line in path.read_text(encoding='utf-8-sig').splitlines():
+        line = line.strip()
+        if not line or line.startswith('#') or '=' not in line:
+            continue
+        key, value = (part.strip() for part in line.split('=', 1))
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in '"\'':
+            value = value[1:-1]
+        if key and value:
+            os.environ.setdefault(key, value)
+            keys.append(key)
+    return keys
+
+
 def main(argv=None):
     from demo.predictor import find_run_dirs
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -321,6 +342,8 @@ def main(argv=None):
     parser.add_argument('--port', type=int, default=8765)
     parser.add_argument('--device', default=None, help='cuda or cpu (default: cuda when available)')
     args = parser.parse_args(argv)
+    if load_secrets():
+        print(f'keys: read from {SECRETS_FILE}')
 
     run_dirs = find_run_dirs(args.checkpoints)
     if not run_dirs:

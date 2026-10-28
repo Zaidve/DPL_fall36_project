@@ -13,8 +13,9 @@ reports/*
 reports/tables/*
 !reports/tables/selection.json
 
-# demo checkpoints (run folders with best.pt, see demo/README.md)
+# demo checkpoints (run folders with best.pt, see demo/README.md) and API keys
 demo/checkpoints/
+demo/secrets.env
 
 # downloaded Kaggle results zips (already merged into models/)
 kaggle_run_data/
