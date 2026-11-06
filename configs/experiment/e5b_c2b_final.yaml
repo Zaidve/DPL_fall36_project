@@ -1,0 +1,16 @@
+# E5b Low resource for the Route C2-b final model (RQ5 follow-up) - priority: Could
+# E5 trained the final model of the selection in selection.json (task-aware heads + reference SMART on NEU-ESC).
+# Route C2-b selects linear heads instead (reports/DPL_C2b_Report_IEEE.pdf), and that model was never trained on
+# the 10 / 25 / 50% subsets. Compare with E5's single-task and mtl/sum runs at the same fractions.
+# mtl/smartref x frac {0.1, 0.25, 0.5} x PhoBERT x NEU-ESC x 3 seeds = 9 runs (about 2 GPU-hours on a T4).
+# Does not need selection.json.
+extends: configs/default.yaml
+experiment: e5b_c2b_final
+rq: RQ5
+datasets: [neu-esc]
+backbones: [phobert]
+seeds: [42, 123, 2026]
+grid:
+  - {mode: mtl, tag: smartref-frac0.1}
+  - {mode: mtl, tag: smartref-frac0.25}
+  - {mode: mtl, tag: smartref-frac0.5}
